@@ -10,6 +10,7 @@ export default function Navigation() {
           <NavLink to="/products" className={({ isActive }) => isActive ? 'active' : undefined}>Products</NavLink>
           <NavLink to="/cart" className={({ isActive }) => isActive ? 'active' : undefined}>Cart</NavLink>
           <NavLink to="/login" className={({ isActive }) => isActive ? 'active' : undefined}>Login</NavLink>
+          <NavLink to="/register" className={({ isActive }) => isActive ? 'active' : undefined}>Register</NavLink>
         </nav>
       </div>
     </header>

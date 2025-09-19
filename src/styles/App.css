@@ -1,0 +1,45 @@
+:root { --accent: #ff3d00; --text: #111; --muted: #666; }
+
+* { box-sizing: border-box; }
+body { margin: 0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color: var(--text); }
+
+.container { max-width: 1920px; margin: 0 auto; }
+
+/* Navigation */
+.nav { border-bottom: 1px solid #eee; position: sticky; top: 0; background: #fff; z-index: 10; height: 80px; }
+.nav .container { display: flex; align-items: center; justify-content: space-between; padding: 28px 100px; }
+.brand { font-weight: 800; color: var(--text); text-decoration: none; font-size: 20px; }
+.nav-links a { color: var(--muted); text-decoration: none; margin-left: 24px; }
+.nav-links a.active, .nav-links a:hover { color: var(--text); }
+
+/* Inputs */
+.form-control { margin-bottom: 16px; }
+.form-label { display: block; font-size: 14px; margin-bottom: 8px; }
+.required { color: #ff3d00; }
+.input-wrapper { position: relative; }
+.input { width: 100%; padding: 12px 14px; border: 1px solid #ddd; border-radius: 8px; outline: none; }
+.input:focus { border-color: #bbb; }
+.input-error { border-color: #ff3d00; }
+.input-icon { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: 0; cursor: pointer; }
+.error-text { color: #d22; font-size: 12px; margin-top: 6px; }
+
+/* Buttons */
+.btn { width: 100%; padding: 14px 16px; border-radius: 12px; border: 0; cursor: pointer; font-weight: 600; }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:disabled { opacity: .7; cursor: not-allowed; }
+
+/* Auth Layout */
+.auth-layout { display: grid; grid-template-columns: 1fr 1fr; height:1000px; max-width: 1920px; margin: 0 auto; }
+.auth-hero { background: url('/src/assets/main.png') center/cover no-repeat; }
+.auth-panel { padding: 64px 80px; display: flex; flex-direction: column; }
+.auth-title { font-size: 48px; margin: 24px 0 32px; font-weight: 800; }
+.auth-form { max-width: 560px; }
+.auth-alt { text-align: center; color: var(--muted); margin-top: 12px; }
+.auth-alt a { color: var(--accent); text-decoration: none; }
+
+.avatar-upload { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
+.avatar { width: 72px; height: 72px; border-radius: 50%; background: #f3f3f3 center/cover no-repeat; }
+.avatar-actions { color: var(--accent); cursor: pointer; }
+.link { background: none; border: 0; color: var(--muted); cursor: pointer; }
+
+
