@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -20,6 +21,7 @@ const schema = z
   });
 
 export default function RegisterPage() {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const {
@@ -27,8 +29,10 @@ export default function RegisterPage() {
     handleSubmit,
     watch,
     setValue,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm({ resolver: zodResolver(schema) });
+  const [apiError, setApiError] = useState('');
 
   const avatarFile = watch('avatar');
 
@@ -46,14 +50,31 @@ useEffect(() => {
 }, [avatarPreview]);
 
   async function onSubmit(values) {
-    await registerRequest({
-      username: values.username,
-      email: values.email,
-      password: values.password,
-      passwordConfirmation: values.confirmPassword,
-      avatar: Array.isArray(values.avatar) ? values.avatar[0] : values.avatar,
-    });
-    // TODO: navigate to products
+    setApiError('');
+    try {
+      await registerRequest({
+        username: values.username,
+        email: values.email,
+        password: values.password,
+        passwordConfirmation: values.confirmPassword,
+        avatar: Array.isArray(values.avatar) ? values.avatar[0] : values.avatar,
+      });
+      navigate('/products');
+    } catch (err) {
+      const message = err?.message || 'Registration failed';
+      setApiError(message);
+      const fieldErrors = err?.errors || {};
+      Object.entries(fieldErrors).forEach(([key, msgs]) => {
+        const msg = Array.isArray(msgs) ? msgs[0] : String(msgs);
+        const map = {
+          password_confirmation: 'confirmPassword',
+        };
+        const formKey = map[key] || key;
+        if (['username', 'email', 'password', 'confirmPassword', 'avatar'].includes(formKey)) {
+          setError(formKey, { type: 'server', message: msg });
+        }
+      });
+    }
   }
 
   return (
@@ -77,6 +98,7 @@ useEffect(() => {
     </button>
   )}
         </div>
+        {apiError ? <p className="error-text" style={{ marginBottom: 8 }}>{apiError}</p> : null}
         <form onSubmit={handleSubmit(onSubmit)} className="auth-form">
           <Input name="username" label="Username" register={register} error={errors.username?.message} required />
           <Input name="email" label="Email" register={register} error={errors.email?.message} required />

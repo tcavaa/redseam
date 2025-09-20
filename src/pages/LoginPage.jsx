@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -12,6 +13,7 @@ const schema = z.object({
 });
 
 export default function LoginPage() {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const {
     register,
@@ -20,8 +22,12 @@ export default function LoginPage() {
   } = useForm({ resolver: zodResolver(schema) });
 
   async function onSubmit(values) {
-    await login(values);
-    // TODO: navigate to products
+    try {
+      await login(values);
+      navigate('/products');
+    } catch (err) {
+      alert(err?.message || 'Login failed');
+    }
   }
 
   return (

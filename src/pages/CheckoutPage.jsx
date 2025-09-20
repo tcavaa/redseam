@@ -4,9 +4,11 @@ import Button from '../components/ui/Button';
 import '../styles/Checkout.css';
 import { checkout as apiCheckout } from '../api/cart';
 import SuccessModal from '../components/ui/SuccessModal.jsx';
+import { useNavigate } from 'react-router-dom';
 
 export default function CheckoutPage() {
   const { items, subtotal, increment, decrement, remove, refresh } = useCartContext();
+  const navigate = useNavigate();
   const delivery = items.length ? 5 : 0;
   const total = subtotal + delivery;
 
@@ -101,11 +103,7 @@ export default function CheckoutPage() {
         </div>
       </div>
 
-      <SuccessModal
-        open={success}
-        onClose={() => setSuccess(false)}
-        onContinue={() => setSuccess(false)}
-      />
+      <SuccessModal open={success} onClose={() => setSuccess(false)} onContinue={() => { setSuccess(false); navigate('/products'); }} />
     </div>
   );
 }

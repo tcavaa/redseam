@@ -24,23 +24,39 @@ export function CartProvider({ children }) {
   }, []);
 
   const refresh = useCallback(async () => {
+    if (!localStorage.getItem('auth_token')) {
+      persist([]);
+      return;
+    }
     setLoading(true);
     try {
       const data = await apiGet();
       persist(Array.isArray(data) ? data : []);
+    } catch (err) {
+      // Silently handle unauthorized when not logged-in/expired token
+      if (err && (err.status === 401 || err.message === 'Please provide valid API token')) {
+        persist([]);
+      } else {
+        // Non-fatal: keep existing items but log for devs
+        // eslint-disable-next-line no-console
+        console.warn('Cart refresh error', err);
+      }
     } finally {
       setLoading(false);
     }
   }, [persist]);
 
   useEffect(() => {
-    refresh();
+    if (localStorage.getItem('auth_token')) {
+      refresh();
+    }
   }, []);
 
   const subtotal = useMemo(() => calculateCartSubtotal(items), [items]);
   const totalQuantity = useMemo(() => calculateTotalCartQuantity(items), [items]);
 
   const add = useCallback(async (productId, { quantity = 1, color, size } = {}) => {
+    if (!localStorage.getItem('auth_token')) return;
     setItems(prev => {
       const existing = findCartItem(prev, productId, { color, size });
       if (existing) {
@@ -64,17 +80,20 @@ export function CartProvider({ children }) {
   }, [refresh]);
 
   const increment = useCallback(async (productId, currentQuantity) => {
+    if (!localStorage.getItem('auth_token')) return;
     await apiUpdate(productId, { quantity: currentQuantity + 1 });
     await refresh();
   }, [refresh]);
 
   const decrement = useCallback(async (productId, currentQuantity) => {
+    if (!localStorage.getItem('auth_token')) return;
     const next = Math.max(1, currentQuantity - 1);
     await apiUpdate(productId, { quantity: next });
     await refresh();
   }, [refresh]);
 
   const remove = useCallback(async (productId) => {
+    if (!localStorage.getItem('auth_token')) return;
     await apiRemove(productId);
     await refresh();
   }, [refresh]);
