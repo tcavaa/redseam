@@ -4,6 +4,7 @@ import { fetchProductById } from '../api/products';
 import ProductGallery from '../components/ProductGallery';
 import { ColorSelector, SizeSelector } from '../components/AttributeDisplay';
 import Button from '../components/ui/Button';
+import { CartIconWhite } from '../components/ui';
 import '../styles/ProductInner.css';
 import { addToCart } from '../api/cart';
 import { useCartContext } from '../hooks/useCart.jsx';
@@ -41,7 +42,7 @@ export default function ProductInnerPage() {
     const n = String(name).trim().toLowerCase();
     const map = {
       black: '#000000',
-      white: '#ffffff',
+      white: '#f0efeb',
       'navy blue': '#1f2a44',
       navy: '#001f3f',
       blue: '#1976d2',
@@ -122,35 +123,41 @@ export default function ProductInnerPage() {
       </div>
       <div className="pdp-right">
         <h1 className="pdp-title">{product.name}</h1>
-        <div className="pdp-price">${product.price}</div>
+        <div className="pdp-price">$ {product.price}</div>
 
         {colors?.length ? (
           <div className="pdp-section">
-            <div className="pdp-label">Color: <span className="muted">{colors[activeColor]?.name || ''}</span></div>
+            <div className="pdp-label">Color: {colors[activeColor]?.name || ''}</div>
             <ColorSelector colors={colors} active={activeColor} onChange={selectIndex} />
           </div>
         ) : null}
 
         <div className="pdp-section">
-          <div className="pdp-label">Size: <span className="muted">{sizes[activeSize]}</span></div>
+          <div className="pdp-label">Size: {sizes[activeSize]}</div>
           <SizeSelector sizes={sizes} active={activeSize} onChange={setActiveSize} />
         </div>
 
         <div className="pdp-section">
           <div className="pdp-label">Quantity</div>
-          <select className="qty" value={quantity} onChange={e => setQuantity(Number(e.target.value))}>
-            {[1,2,3,4,5].map(q => <option key={q} value={q}>{q}</option>)}
-          </select>
+          <div className="qty-select">
+            <select className="qty" value={quantity} onChange={e => setQuantity(Number(e.target.value))}>
+              {[1,2,3,4,5].map(q => <option key={q} value={q}>{q}</option>)}
+            </select>
+          </div>
         </div>
 
-        <Button onClick={handleAddToCart}>Add to cart</Button>
+        <Button className='btn btn-primary pdp-cart-button' onClick={handleAddToCart}><img className='pdp-cart-icon-white' src={CartIconWhite} alt="Add to cart" /> Add to cart</Button>
 
         <hr className="pdp-sep" />
 
         <div className="pdp-details">
-          <h3>Details</h3>
+          <div className="pdp-details-header">
+            <h3>Details</h3>
+            <img src={product.brand.image} alt={product.brand.name} />
+          </div>
+          
           {product?.brand?.name ? (
-            <div className="brand">Brand: {product.brand.name}</div>
+            <div className="pdp-details-brand">Brand: {product.brand.name}</div>
           ) : null}
           <p className="desc">{product.description}</p>
         </div>
