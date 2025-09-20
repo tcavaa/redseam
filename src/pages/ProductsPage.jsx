@@ -1,8 +1,9 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { fetchProducts } from '../api/products';
 import ProductCard from '../components/product/ProductCard';
 import '../styles/ProductsPage.css';
+import { Filters as FiltersIcon, ChevronDown, ChevronLeft, ChevronRight } from '../components/ui';
 
 const PAGE_SIZE = 10;
 
@@ -38,6 +39,10 @@ export default function ProductsPage() {
   const [links, setLinks] = useState({});
   const [total, setTotal] = useState();
   const [loading, setLoading] = useState(true);
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [sortOpen, setSortOpen] = useState(false);
+  const [priceFromInput, setPriceFromInput] = useState('');
+  const [priceToInput, setPriceToInput] = useState('');
 
   const page = Number(searchParams.get('page') || 1);
   const sort = searchParams.get('sort') || '-created_at';
@@ -48,6 +53,19 @@ export default function ProductsPage() {
     if (!total || !meta?.per_page) return undefined;
     return Math.max(1, Math.ceil(total / meta.per_page));
   }, [total, meta]);
+
+  const sortLabel = useMemo(() => {
+    switch (sort) {
+      case '-created_at':
+        return 'New products first';
+      case 'price':
+        return 'Price, low to high';
+      case '-price':
+        return 'Price, high to low';
+      default:
+        return 'Sort by';
+    }
+  }, [sort]);
 
   useEffect(() => {
     let mounted = true;
@@ -82,19 +100,37 @@ export default function ProductsPage() {
     };
   }, [page, priceFrom, priceTo, sort]);
 
-  function updateParam(key, value) {
+  const updateParam = useCallback((key, value) => {
     const next = new URLSearchParams(searchParams);
     if (value === '' || value == null) next.delete(key);
     else next.set(key, value);
     next.set('page', '1');
     setSearchParams(next);
-  }
+  }, [searchParams, setSearchParams]);
 
-  function goToPage(p) {
+  const updateParams = useCallback((pairs) => {
+    const next = new URLSearchParams(searchParams);
+    Object.entries(pairs).forEach(([key, value]) => {
+      if (value === '' || value == null) next.delete(key);
+      else next.set(key, value);
+    });
+    next.set('page', '1');
+    setSearchParams(next);
+  }, [searchParams, setSearchParams]);
+
+  const goToPage = useCallback((p) => {
     const next = new URLSearchParams(searchParams);
     next.set('page', String(p));
     setSearchParams(next);
-  }
+  }, [searchParams, setSearchParams]);
+
+  // When opening filter panel, seed inputs from current params
+  useEffect(() => {
+    if (filterOpen) {
+      setPriceFromInput(priceFrom);
+      setPriceToInput(priceTo);
+    }
+  }, [filterOpen]);
 
   const pages = buildPagination(page, totalPages || 1);
 
@@ -109,33 +145,51 @@ export default function ProductsPage() {
             ) : null}
           </div>
           <div className="toolbar">
-            <form className="filters" onSubmit={e => e.preventDefault()}>
-              <span className="icon">⚙️</span>
-              <span className="label">Filter</span>
-              <input
-                type="number"
-                placeholder="Price from"
-                value={priceFrom}
-                onChange={e => updateParam('price_from', e.target.value)}
-              />
-              <input
-                type="number"
-                placeholder="Price to"
-                value={priceTo}
-                onChange={e => updateParam('price_to', e.target.value)}
-              />
-            </form>
-            <div className="sort">
-              <span className="label">Sort by</span>
-              <select value={sort} onChange={e => updateParam('sort', e.target.value)}>
-                <option value="-created_at">New products first</option>
-                <option value="price">Price, low to high</option>
-                <option value="-price">Price, high to low</option>
-              </select>
+            <div className="menu">
+              <button className="menu-trigger" onClick={() => { setFilterOpen(o => !o); setSortOpen(false); }}>
+                <img className='filters-icon-menu' src={FiltersIcon} alt="Filters" />
+                <span>Filter</span>
+              </button>
+              {filterOpen ? (
+                <div className="menu-panel">
+                  <h4>Select price</h4>
+                  <div className="row">
+                    <input type="number" placeholder="From *" value={priceFromInput} onChange={e => setPriceFromInput(e.target.value)} />
+                    <input type="number" placeholder="To *" value={priceToInput} onChange={e => setPriceToInput(e.target.value)} />
+                  </div>
+                  <button className="btn btn-primary" onClick={() => { updateParams({ 'price_from': priceFromInput, 'price_to': priceToInput }); setFilterOpen(false); }}>Apply</button>
+                </div>
+              ) : null}
+            </div>
+
+            <div className="menu">
+              <button className="menu-trigger" onClick={() => { setSortOpen(o => !o); setFilterOpen(false); }}>
+                <span>{sortLabel}</span>
+                <img className='chevron-down-menu' src={ChevronDown} alt="Chevron Down" />
+              </button>
+              {sortOpen ? (
+                <div className="menu-panel short-panel">
+                  <h4 className='sort-by-title'>Sort by</h4>
+                  <ul className="menu-list">
+                    <li><button onClick={() => { updateParam('sort', '-created_at'); setSortOpen(false); }}>New products first</button></li>
+                    <li><button onClick={() => { updateParam('sort', 'price'); setSortOpen(false); }}>Price, low to high</button></li>
+                    <li><button onClick={() => { updateParam('sort', '-price'); setSortOpen(false); }}>Price, high to low</button></li>
+                  </ul>
+                </div>
+              ) : null}
             </div>
           </div>
         </div>
       </div>
+
+      {(priceFrom || priceTo) ? (
+        <div className="applied-filters">
+          <span className="filter-chip">
+            Price: {priceFrom || '0'}–{priceTo || '∞'}
+            <button className="chip-remove" aria-label="Remove price filter" onClick={() => { updateParams({ 'price_from': '', 'price_to': '' }); }}>×</button>
+          </span>
+        </div>
+      ) : null}
 
       {loading ? (
         <div className="loading">Loading...</div>
@@ -149,7 +203,7 @@ export default function ProductsPage() {
 
       <div className="pagination">
         <button className="arrow" onClick={() => goToPage(Math.max(1, page - 1))} disabled={page === 1}>
-          ‹
+          <img src={ChevronLeft} alt="Chevron Left" />
         </button>
         <div className="pages">
           {pages.map((p, idx) =>
@@ -168,7 +222,7 @@ export default function ProductsPage() {
           )}
         </div>
         <button className="arrow" onClick={() => goToPage(page + 1)} disabled={totalPages ? page >= totalPages : products.length < PAGE_SIZE}>
-          ›
+          <img src={ChevronRight} alt="Chevron Right" />
         </button>
       </div>
     </div>

@@ -4,9 +4,10 @@
 @import "@fontsource/poppins/600.css";
 @import "@fontsource/poppins/700.css";
 @import "@fontsource/poppins/800.css";
+@import "sfprotext/sfprotext.css";
 
 :root {
-	--accent: #ff3d00;
+	--accent: #FF4000;
 	--text: #000000;
 	--muted: #666;
 }
