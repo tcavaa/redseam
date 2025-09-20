@@ -6,9 +6,11 @@ import { ColorSelector, SizeSelector } from '../components/AttributeDisplay';
 import Button from '../components/ui/Button';
 import '../styles/ProductInner.css';
 import { addToCart } from '../api/cart';
+import { useCartContext } from '../hooks/useCart.jsx';
 
 export default function ProductInnerPage() {
   const { id } = useParams();
+  const { add } = useCartContext();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeImage, setActiveImage] = useState(0);
@@ -49,6 +51,7 @@ export default function ProductInnerPage() {
       beige: '#f5f0e1',
       brown: '#8d6e63',
       purple: '#7b1fa2',
+      peach: '#ffe5b4',
       lavender: '#c3b1e1',
       pink: '#ec407a',
       'baby pink': '#f1d9df',
@@ -101,12 +104,11 @@ export default function ProductInnerPage() {
 
   async function handleAddToCart() {
     if (!product) return;
-    await addToCart(product.id, {
+    await add(product.id, {
       quantity,
       color: colors[activeColor]?.name || colors[activeColor]?.label || '',
       size: sizes[activeSize],
     });
-    // Optionally show toast
   }
 
   if (loading || !product) {

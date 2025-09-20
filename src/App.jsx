@@ -6,18 +6,24 @@ import ProductInnerPage from './pages/ProductInnerPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import './styles/App.css';
+import { CartProvider } from './hooks/useCart.jsx';
+import Cart from './components/cart/Cart';
 
 export default function App() {
   return (
     <BrowserRouter>
-      <Navigation />
-      <Routes>
-        <Route path="/" element={<Navigate to="/products" />} />
-        <Route path="/products" element={<ProductsPage />} />
-        <Route path="/products/:id" element={<ProductInnerPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-      </Routes>
+      <CartProvider>
+        <Navigation />
+        <Routes>
+          <Route path="/" element={<Navigate to="/products" />} />
+          <Route path="/products" element={<ProductsPage />} />
+          <Route path="/products/:id" element={<ProductInnerPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/checkout" element={<div className="container" style={{ padding: 40 }}>Checkout placeholder</div>} />
+        </Routes>
+        <Cart />
+      </CartProvider>
     </BrowserRouter>
   );
 }
