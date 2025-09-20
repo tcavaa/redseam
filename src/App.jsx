@@ -8,6 +8,7 @@ import RegisterPage from './pages/RegisterPage';
 import './styles/App.css';
 import { CartProvider } from './hooks/useCart.jsx';
 import Cart from './components/cart/Cart';
+import CheckoutPage from './pages/CheckoutPage.jsx';
 
 export default function App() {
   return (
@@ -20,7 +21,7 @@ export default function App() {
           <Route path="/products/:id" element={<ProductInnerPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/checkout" element={<div className="container" style={{ padding: 40 }}>Checkout placeholder</div>} />
+          <Route path="/checkout" element={<CheckoutPage />} />
         </Routes>
         <Cart />
       </CartProvider>
