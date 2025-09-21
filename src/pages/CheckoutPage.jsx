@@ -5,6 +5,11 @@ import '../styles/Checkout.css';
 import { checkout as apiCheckout } from '../api/cart';
 import SuccessModal from '../components/ui/SuccessModal.jsx';
 import { useNavigate } from 'react-router-dom';
+import CartItem from '../components/cart/CartItem.jsx';
+import { Envelope } from '../components/ui';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 export default function CheckoutPage() {
   const { items, subtotal, increment, decrement, remove, refresh } = useCartContext();
@@ -19,32 +24,37 @@ export default function CheckoutPage() {
     } catch { return {}; }
   }, []);
 
-  const [form, setForm] = useState({
-    name: '',
-    surname: '',
-    email: storedUser?.email || '',
-    address: '',
-    zipCode: '',
+  const schema = z.object({
+    name: z.string().trim().min(1, 'Name is required'),
+    surname: z.string().trim().min(1, 'Surname is required'),
+    email: z.string().trim().min(1, 'Email is required').email('Invalid email'),
+    address: z.string().trim().min(1, 'Address is required'),
+    zipCode: z.string().trim().min(3, 'Zip code is required'),
+  });
+
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      name: '',
+      surname: '',
+      email: storedUser?.email || '',
+      address: '',
+      zipCode: '',
+    },
   });
 
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  function onChange(e) {
-    const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
-  }
-
-  async function onSubmit(e) {
-    e.preventDefault();
+  async function onSubmit(values) {
     setSubmitting(true);
     try {
       await apiCheckout({
-        email: form.email,
-        name: form.name,
-        surname: form.surname,
-        zipCode: form.zipCode,
-        address: form.address,
+        email: values.email,
+        name: values.name,
+        surname: values.surname,
+        zipCode: values.zipCode,
+        address: values.address,
       });
       setSuccess(true);
       await refresh();
@@ -60,12 +70,30 @@ export default function CheckoutPage() {
         <div className="checkout-form">
           <div className="panel">
             <h3>Order details</h3>
-            <form onSubmit={onSubmit} className="form-grid">
-              <input name="name" placeholder="Name" value={form.name} onChange={onChange} required />
-              <input name="surname" placeholder="Surname" value={form.surname} onChange={onChange} required />
-              <input name="email" placeholder="Email" value={form.email} onChange={onChange} type="email" required />
-              <input name="address" placeholder="Address" value={form.address} onChange={onChange} required />
-              <input name="zipCode" placeholder="Zip code" value={form.zipCode} onChange={onChange} required />
+            <form onSubmit={handleSubmit(onSubmit)} className="form-grid">
+              <div className="field">
+                <input className="checkout-input" placeholder="Name" {...register('name')} />
+                {errors.name?.message ? <p className="error-text">{errors.name.message}</p> : null}
+              </div>
+              <div className="field">
+                <input className="checkout-input" placeholder="Surname" {...register('surname')} />
+                {errors.surname?.message ? <p className="error-text">{errors.surname.message}</p> : null}
+              </div>
+              <div className="field field-span2">
+                <div className="input-with-icon">
+                  <span className="left-icon"><img src={Envelope} alt="Email" /></span>
+                  <input className="checkout-input has-icon" placeholder="Email" type="email" {...register('email')} />
+                </div>
+                {errors.email?.message ? <p className="error-text">{errors.email.message}</p> : null}
+              </div>
+              <div className="field">
+                <input className="checkout-input" placeholder="Address" {...register('address')} />
+                {errors.address?.message ? <p className="error-text">{errors.address.message}</p> : null}
+              </div>
+              <div className="field">
+                <input className="checkout-input" placeholder="Zip code" {...register('zipCode')} />
+                {errors.zipCode?.message ? <p className="error-text">{errors.zipCode.message}</p> : null}
+              </div>
               <div className="spacer" />
             </form>
           </div>
@@ -73,32 +101,25 @@ export default function CheckoutPage() {
 
         <div className="checkout-summary">
           <ul className="summary-list">
-            {items.map(item => (
-              <li key={item.id} className="summary-item">
-                <div className="thumb"><img src={item.cover_image || item.image} alt={item.name} /></div>
-                <div className="info">
-                  <div className="name">{item.name}</div>
-                  <div className="attrs">
-                    {item.color ? <span>{item.color}</span> : null}
-                    {item.size ? <span>{item.size}</span> : null}
-                  </div>
-                  <div className="qty">
-                    <button onClick={() => decrement(item.id, item.quantity || 1)}>−</button>
-                    <span>{item.quantity || 1}</span>
-                    <button onClick={() => increment(item.id, item.quantity || 1)}>+</button>
-                  </div>
-                </div>
-                <div className="price">${item.price}</div>
-                <button className="remove" onClick={() => remove(item.id)}>Remove</button>
-              </li>
+          {items.map(item => (
+              <CartItem key={item.id} item={item} />
             ))}
           </ul>
 
-          <div className="totals">
-            <div className="row"><span>Items subtotal</span><span>${subtotal}</span></div>
-            <div className="row"><span>Delivery</span><span>${delivery}</span></div>
-            <div className="row total"><span>Total</span><span>${total}</span></div>
-            <Button disabled={submitting} onClick={onSubmit}>Pay</Button>
+          <div className="cart-footer">
+            <div className="row">
+              <span>Items subtotal</span>
+              <span>$ {subtotal}</span>
+            </div>
+            <div className="row">
+              <span>Delivery</span>
+              <span>$ {items.length ? delivery : 0}</span>
+            </div>
+            <div className="total">
+              <span>Total</span>
+              <span>$ {total}</span>
+            </div>
+            <Button className="btn btn-primary btn-cart-checkout" disabled={submitting || isSubmitting} onClick={handleSubmit(onSubmit)}>Pay</Button>
           </div>
         </div>
       </div>

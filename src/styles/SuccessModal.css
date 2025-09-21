@@ -1,9 +1,72 @@
-.success-modal { position: fixed; inset: 0; background: rgba(0,0,0,.6); display: flex; align-items: center; justify-content: center; z-index: 60; }
-.success-dialog { position: relative; width: 720px; max-width: 90vw; background: #fff; border-radius: 12px; padding: 56px 24px 40px; text-align: center; box-shadow: 0 20px 80px rgba(0,0,0,.2); }
-.success-dialog .close { position: absolute; right: 16px; top: 16px; background: none; border: 0; font-size: 20px; cursor: pointer; color: #666; }
-.success-dialog .icon { display: flex; justify-content: center; margin-bottom: 16px; }
-.success-dialog .circle { width: 72px; height: 72px; border-radius: 50%; background: #f4f4f6; display: flex; align-items: center; justify-content: center; }
-.success-dialog h2 { font-size: 48px; margin: 16px 0 8px; }
-.success-dialog p { color: #6f6f6f; margin: 0 0 24px; }
-.success-dialog .actions { display: flex; justify-content: center; }
+.success-modal {
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, .6);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 60;
+}
 
+.success-dialog {
+	position: relative;
+	width: 720px;
+	max-width: 90vw;
+	background: #fff;
+	border-radius: 12px;
+	padding: 56px 24px 40px;
+	text-align: center;
+	box-shadow: 0 20px 80px rgba(0, 0, 0, .2);
+}
+
+.success-dialog .close {
+	position: absolute;
+	right: 16px;
+	top: 16px;
+	background: none;
+	border: 0;
+	font-size: 24px;
+	cursor: pointer;
+	color: #3E424A;
+}
+
+.success-dialog .icon {
+	display: flex;
+	justify-content: center;
+	margin-bottom: 16px;
+}
+
+.success-dialog .circle {
+	width: 76px;
+	height: 76px;
+	border-radius: 50%;
+	background: #F8F6F7;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.success-dialog h2 {
+	font-size: 42px;
+    font-weight: 600;
+    color:#10151F;
+	margin: 40px 0 16px 0;
+}
+
+.success-dialog p {
+	color: #3E424A;
+    font-weight: 400;
+    font-size: 14px;
+	margin: 0 0 74px;
+}
+
+.success-dialog .actions {
+	display: flex;
+	justify-content: center;
+}
+
+.btn-success-modal {
+    width:214px;
+    font-weight: 400;
+    font-size: 14px;
+}

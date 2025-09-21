@@ -41,7 +41,7 @@
 .cart-body {
 	flex: 1;
 	overflow: auto;
-	padding: 12px 24px;
+	padding: 64px 0;
 }
 
 .cart-empty {
