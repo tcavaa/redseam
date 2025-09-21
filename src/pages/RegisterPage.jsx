@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
+import { Eye, CameraIcon } from '../components/ui';
 import { register as registerRequest } from '../api/auth';
 
 const schema = z
@@ -13,7 +14,17 @@ const schema = z
     email: z.string().min(3, 'Min 3 characters').email('Invalid email'),
     password: z.string().min(3, 'Min 3 characters'),
     confirmPassword: z.string().min(3, 'Min 3 characters'),
-    avatar: z.any().optional(),
+    avatar: z
+      .any()
+      .refine(
+        (fileList) => {
+          if (!fileList || fileList.length === 0) return true; // optional
+          const file = fileList[0];
+          return file.size <= 1024 * 1024; // <= 1MB
+        },
+        { message: 'Image must be 1MB or smaller' }
+      )
+      .optional(),
   })
   .refine(data => data.password === data.confirmPassword, {
     path: ['confirmPassword'],
@@ -30,6 +41,7 @@ export default function RegisterPage() {
     watch,
     setValue,
     setError,
+    clearErrors,
     formState: { errors, isSubmitting },
   } = useForm({ resolver: zodResolver(schema) });
   const [apiError, setApiError] = useState('');
@@ -48,6 +60,14 @@ useEffect(() => {
     if (avatarPreview) URL.revokeObjectURL(avatarPreview);
   };
 }, [avatarPreview]);
+
+  const avatarRegister = register('avatar', {
+    validate: fileList => {
+      if (!fileList || fileList.length === 0) return true;
+      const file = fileList[0];
+      return file.size <= 1024 * 1024 || 'Image must be 1MB or smaller';
+    },
+  });
 
   async function onSubmit(values) {
     setApiError('');
@@ -80,25 +100,30 @@ useEffect(() => {
   return (
     <div className="auth-layout">
       <div className="auth-hero" />
-      <div className="auth-panel">
+      <div className="auth-panel auth-panel-register">
         <h1 className="auth-title">Registration</h1>
+        {errors.avatar?.message ? <p className="error-text">{errors.avatar.message}</p> : null}
         <div className="avatar-upload">
-          <div className="avatar" style={avatarPreview ? { backgroundImage: `url(${avatarPreview})` } : {}} />
-          <label className="avatar-actions">
-            <input type="file" accept="image/*" {...register('avatar')} hidden />
-            <span>Upload new</span>
-          </label>
-          {avatarPreview && (
-    <button
-      type="button"
-      className="link"
-      onClick={() => setValue('avatar', null)}
-    >
-      Remove
-    </button>
-  )}
+          
+          {avatarPreview ? (
+            <>
+              <div className="avatar-preview"><img src={avatarPreview} alt="Avatar preview" /></div>
+              <label className="avatar-actions">
+                <input type="file" accept="image/*" {...avatarRegister} hidden />
+                <span>Upload new</span>
+              </label>
+              <button type="button" className="link" onClick={() => { setValue('avatar', null); clearErrors('avatar'); }}>Remove</button>
+            </>
+          ) : (
+            <label className="avatar-placeholder">
+              <input type="file" accept="image/*" {...avatarRegister} hidden />
+              <div className="avatar-circle">
+                <img className="camera-icon" src={CameraIcon} alt="Upload" />
+              </div>
+              <span className="placeholder-text">Upload image</span>
+            </label>
+          )}
         </div>
-        {apiError ? <p className="error-text" style={{ marginBottom: 8 }}>{apiError}</p> : null}
         <form onSubmit={handleSubmit(onSubmit)} className="auth-form">
           <Input name="username" label="Username" register={register} error={errors.username?.message} required />
           <Input name="email" label="Email" register={register} error={errors.email?.message} required />
@@ -109,7 +134,7 @@ useEffect(() => {
             register={register}
             error={errors.password?.message}
             required
-            rightIcon={<span role="img" aria-label="toggle">👁️</span>}
+            rightIcon={<span role="img" aria-label="toggle"><img src={Eye} alt="Eye" /></span>}
             onRightIconClick={() => setShowPassword(s => !s)}
           />
           <Input
@@ -119,10 +144,10 @@ useEffect(() => {
             register={register}
             error={errors.confirmPassword?.message}
             required
-            rightIcon={<span role="img" aria-label="toggle">👁️</span>}
+            rightIcon={<span role="img" aria-label="toggle"><img src={Eye} alt="Eye" /></span>}
             onRightIconClick={() => setShowConfirm(s => !s)}
           />
-          <Button type="submit" disabled={isSubmitting}>Register</Button>
+          <Button className="btn btn-primary btn-auth" type="submit" disabled={isSubmitting}>Register</Button>
           <p className="auth-alt">Already member? <a href="/login">Log in</a></p>
         </form>
       </div>

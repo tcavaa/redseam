@@ -9,7 +9,7 @@
 :root {
 	--accent: #FF4000;
 	--text: #000000;
-	--muted: #666;
+	--muted: #3E424A;
 }
 
 * {
@@ -180,7 +180,7 @@ img.chevron-down {
 
 /* Inputs */
 .form-control {
-	margin-bottom: 16px;
+	margin-bottom: 24px;
 }
 
 .form-label {
@@ -189,9 +189,7 @@ img.chevron-down {
 	margin-bottom: 8px;
 }
 
-.required {
-	color: #ff3d00;
-}
+.required { color: #FF4000; }
 
 .input-wrapper {
 	position: relative;
@@ -199,18 +197,42 @@ img.chevron-down {
 
 .input {
 	width: 100%;
-	padding: 12px 14px;
-	border: 1px solid #ddd;
+	padding: 12px 12px;
+	border: 1px solid #E1DFE1;
 	border-radius: 8px;
 	outline: none;
+	background: #fff;
 }
 
+.input-infield {
+	padding: 13px 13px;
+}
+
+.infield .infield-label {
+	position: absolute;
+	left: 14px;
+	top: 50%;
+	transform: translateY(-50%);
+	color: #3E424A;
+	font-weight: 400;
+	font-size: 14px;
+	pointer-events: none;
+	transition: all .15s ease;
+}
+
+.infield .input:focus+.infield-label,
+.infield .input:not(:placeholder-shown)+.infield-label {
+	top: 0px;
+	transform: none;
+	font-size: 12px;
+	color: #3E424A;
+}
 .input:focus {
 	border-color: #bbb;
 }
 
 .input-error {
-	border-color: #ff3d00;
+	border-color: var(--accent);
 }
 
 .input-icon {
@@ -224,7 +246,7 @@ img.chevron-down {
 }
 
 .error-text {
-	color: #d22;
+	color: var(--accent);
 	font-size: 12px;
 	margin-top: 6px;
 }
@@ -249,6 +271,12 @@ img.chevron-down {
 	cursor: not-allowed;
 }
 
+.btn-auth {
+	font-weight: 400;
+	font-size: 14px;
+	margin-top:22px;
+}
+
 /* Auth Layout */
 .auth-layout {
 	display: grid;
@@ -256,32 +284,42 @@ img.chevron-down {
 	height: 1000px;
 	max-width: 1920px;
 	margin: 0 auto;
+	gap:173px;
 }
 
 .auth-hero {
-	background: url('/src/assets/main.png') center/cover no-repeat;
+	background: url('/src/assets/main.png') no-repeat;
+	background-size: 948px auto;
 }
 
 .auth-panel {
-	padding: 64px 80px;
 	display: flex;
+	width: 554px;
 	flex-direction: column;
+	margin:241px 0;
+}
+
+.auth-panel-register {
+	margin-top:152px;
 }
 
 .auth-title {
-	font-size: 48px;
-	margin: 24px 0 32px;
-	font-weight: 800;
+	margin:0;
+	font-weight: 600;
+	font-size: 42px;
+	margin-bottom: 24px;
 }
 
 .auth-form {
-	max-width: 560px;
+	width: 100%;
 }
 
 .auth-alt {
 	text-align: center;
 	color: var(--muted);
-	margin-top: 12px;
+	margin-top: 24px;
+	font-size:14px;
+	font-weight: 400;
 }
 
 .auth-alt a {
@@ -293,19 +331,64 @@ img.chevron-down {
 	display: flex;
 	align-items: center;
 	gap: 16px;
-	margin-bottom: 16px;
+	margin-bottom: 46px;
 }
 
+.avatar-preview { 
+	width: 100px; 
+	height: 100px; 
+	border-radius: 100px; 
+	overflow: hidden; 
+}
+
+.avatar-preview img {
+	width: 100px; 
+	height: 100px; 
+	object-fit: cover; 
+	display: block; 
+}
 .avatar-actions {
-	color: var(--accent);
+	color: #3E424A;
+	font-weight: 400;
+	font-size: 14px;
+	cursor: pointer;
+}
+.avatar-upload .link {
+	color: #3E424A;
+	font-weight: 400;
+	font-size: 14px;
+}
+
+.avatar-placeholder { 
+	display: inline-flex; 
+	align-items: center; 
+	gap: 16px; 
+	cursor: pointer; 
+}
+.avatar-circle { 
+	width: 100px; 
+	height: 100px; 
+	border-radius: 100px; 
+	border: 1px solid #E1DFE1; 
+	display: flex; 
+	align-items: center; 
+	justify-content: center; 
+}
+.camera-icon { 
+	width: 20px; 
+	height: 20px; 
+}
+.placeholder-text { 
+	color: #3E424A;
+	font-weight: 400;
+	font-size: 14px;
 	cursor: pointer;
 }
 
 .link {
 	background: none;
 	border: 0;
-	color: var(--muted);
 	cursor: pointer;
 	width: 24px;
-	height: 19.5px;
 }
+

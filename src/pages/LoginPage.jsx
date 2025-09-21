@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
+import { Eye } from '../components/ui';
 import { login } from '../api/auth';
 
 const schema = z.object({
@@ -15,6 +16,7 @@ const schema = z.object({
 export default function LoginPage() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [apiError, setApiError] = useState('');
   const {
     register,
     handleSubmit,
@@ -22,11 +24,12 @@ export default function LoginPage() {
   } = useForm({ resolver: zodResolver(schema) });
 
   async function onSubmit(values) {
+    setApiError('');
     try {
       await login(values);
       navigate('/products');
     } catch (err) {
-      alert(err?.message || 'Login failed');
+      setApiError('Email and/or password is incorrect');
     }
   }
 
@@ -35,11 +38,11 @@ export default function LoginPage() {
       <div className="auth-hero" />
       <div className="auth-panel">
         <h1 className="auth-title">Log in</h1>
+        {apiError ? <p className="error-text" style={{ marginBottom: 8 }}>{apiError}</p> : null}
         <form onSubmit={handleSubmit(onSubmit)} className="auth-form">
           <Input
             name="email"
             label="Email"
-            placeholder="Enter your email"
             register={register}
             error={errors.email?.message}
             required
@@ -48,14 +51,13 @@ export default function LoginPage() {
             name="password"
             type={showPassword ? 'text' : 'password'}
             label="Password"
-            placeholder="Enter your password"
             register={register}
             error={errors.password?.message}
             required
-            rightIcon={<span role="img" aria-label="toggle">👁️</span>}
+            rightIcon={<span role="img" aria-label="toggle"><img src={Eye} alt="Eye" /></span>}
             onRightIconClick={() => setShowPassword(s => !s)}
           />
-          <Button type="submit" disabled={isSubmitting}>
+          <Button className="btn btn-primary btn-auth" type="submit" disabled={isSubmitting}>
             Log in
           </Button>
           <p className="auth-alt">Not a member? <a href="/register">Register</a></p>
