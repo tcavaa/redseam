@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { useCartContext } from '../hooks/useCart.jsx';
+import { UI } from '../constants';
 import Button from '../components/ui/Button';
 import '../styles/Checkout.css';
 import { checkout as apiCheckout } from '../api/cart';
@@ -14,7 +15,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 export default function CheckoutPage() {
   const { items, subtotal, increment, decrement, remove, refresh } = useCartContext();
   const navigate = useNavigate();
-  const delivery = items.length ? 5 : 0;
+  const delivery = items.length ? UI.DELIVERY_FEE : 0;
   const total = subtotal + delivery;
 
   const storedUser = useMemo(() => {

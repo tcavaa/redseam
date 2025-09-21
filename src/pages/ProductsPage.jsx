@@ -3,9 +3,10 @@ import { useSearchParams } from 'react-router-dom';
 import { fetchProducts } from '../api/products';
 import ProductCard from '../components/product/ProductCard';
 import '../styles/ProductsPage.css';
+import { UI } from '../constants';
 import { Filters as FiltersIcon, ChevronDown, ChevronLeft, ChevronRight } from '../components/ui';
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = UI.PAGE_SIZE;
 
 function parsePageFromUrl(url) {
   try {

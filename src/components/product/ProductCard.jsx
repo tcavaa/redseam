@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Link } from 'react-router-dom';
 
 
-export default function ProductCard({ product }) {
+function ProductCard({ product }) {
   const image = product?.cover_image || product?.image;
   return (
     <Link className="product-card" to={`/products/${product.id}`}>
@@ -16,4 +16,6 @@ export default function ProductCard({ product }) {
     </Link>
   );
 }
+
+export default memo(ProductCard);
 

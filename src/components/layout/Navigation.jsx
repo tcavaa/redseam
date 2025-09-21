@@ -5,6 +5,7 @@ import { logout } from '../../api/auth';
 import { useAuth } from '../../hooks/useAuth.jsx';
 import logo from '../../assets/logo.png';
 import { CartIcon, ChevronDown, UserIcon } from '../ui';
+import { ROUTES } from '../../constants';
 
 export default function Navigation() {
   const { setOpen } = useCartContext();
@@ -14,7 +15,7 @@ export default function Navigation() {
   return (
     <header className="nav">
       <div className="container">
-        <Link to="/products" className="brand"><img className="brand-logo" src={logo} alt="RedSeam" /> RedSeam Clothing</Link>
+        <Link to={ROUTES.PRODUCTS} className="brand"><img className="brand-logo" src={logo} alt="RedSeam" /> RedSeam Clothing</Link>
         <nav className="nav-links">
           {isAuthed ? (
             <>
@@ -39,7 +40,7 @@ export default function Navigation() {
             </>
           ) : (
             <>
-              <NavLink to="/login" className="login-container" ><img className='user-icon' src={UserIcon} alt="Cart" /> Login</NavLink>
+              <NavLink to={ROUTES.LOGIN} className="login-container" ><img className='user-icon' src={UserIcon} alt="Cart" /> Login</NavLink>
             </>
           )}
         </nav>
