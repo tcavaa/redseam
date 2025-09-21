@@ -19,7 +19,7 @@ export default function CartItem({ item }) {
           <button onClick={() => increment(item.id, qty)}>+</button>
         </div>
       </div>
-      <div className="price">${item.price}</div>
+      <div className="price">$ {item.price}</div>
       <button className="remove" onClick={() => remove(item.id)}>Remove</button>
     </li>
   );
