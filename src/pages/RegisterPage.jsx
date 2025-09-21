@@ -10,8 +10,8 @@ import { register as registerRequest } from '../api/auth';
 
 const schema = z
   .object({
-    username: z.string().min(3, 'Min 3 characters'),
-    email: z.string().min(3, 'Min 3 characters').email('Invalid email'),
+    username: z.string().trim().min(3, 'Min 3 characters'),
+    email: z.string().email('Invalid email'),
     password: z.string().min(3, 'Min 3 characters'),
     confirmPassword: z.string().min(3, 'Min 3 characters'),
     avatar: z
@@ -23,6 +23,14 @@ const schema = z
           return file.size <= 1024 * 1024; // <= 1MB
         },
         { message: 'Image must be 1MB or smaller' }
+      )
+      .refine(
+        (fileList) => {
+          if (!fileList || fileList.length === 0) return true; // optional
+          const file = fileList[0];
+          return ['image/jpeg', 'image/png', 'image/webp', 'image/gif'].includes(file.type);
+        },
+        { message: 'Only JPG, PNG, WebP, or GIF images are allowed' }
       )
       .optional(),
   })

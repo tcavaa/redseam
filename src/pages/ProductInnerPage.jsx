@@ -6,7 +6,6 @@ import { ColorSelector, SizeSelector } from '../components/AttributeDisplay';
 import Button from '../components/ui/Button';
 import { CartIconWhite } from '../components/ui';
 import '../styles/ProductInner.css';
-import { addToCart } from '../api/cart';
 import { useCartContext } from '../hooks/useCart.jsx';
 
 export default function ProductInnerPage() {
@@ -95,7 +94,7 @@ export default function ProductInnerPage() {
 
   const images = useMemo(() => pairs.map(p => p.url), [pairs]);
   const colors = useMemo(() => pairs.map(p => p.color), [pairs]);
-  const sizes = useMemo(() => product?.sizes || ['XS', 'S', 'M', 'L', 'XL'], [product]);
+  const sizes = useMemo(() => (Array.isArray(product?.available_sizes) ? product.available_sizes : []), [product]);
 
   // Single selection handler keeps color and image in lockstep
   function selectIndex(idx) {
@@ -107,8 +106,8 @@ export default function ProductInnerPage() {
     if (!product) return;
     await add(product.id, {
       quantity,
-      color: colors[activeColor]?.name || colors[activeColor]?.label || '',
-      size: sizes[activeSize],
+      color: (colors[activeColor]?.name || colors[activeColor]?.label || '').trim().toLowerCase(),
+      size: (sizes[activeSize] || '').trim().toUpperCase(),
     });
   }
 
@@ -132,10 +131,17 @@ export default function ProductInnerPage() {
           </div>
         ) : null}
 
-        <div className="pdp-section">
-          <div className="pdp-label">Size: {sizes[activeSize]}</div>
-          <SizeSelector sizes={sizes} active={activeSize} onChange={setActiveSize} />
-        </div>
+        {sizes.length ? (
+          <div className="pdp-section">
+            <div className="pdp-label">Size: {sizes[activeSize]}</div>
+            <SizeSelector sizes={sizes} active={activeSize} onChange={setActiveSize} />
+          </div>
+        ) : (
+          <div className="pdp-section">
+            <div className="pdp-label">Size</div>
+            <div style={{ color: '#777' }}>No sizes available for this item</div>
+          </div>
+        )}
 
         <div className="pdp-section">
           <div className="pdp-label">Quantity</div>
@@ -146,7 +152,7 @@ export default function ProductInnerPage() {
           </div>
         </div>
 
-        <Button className='btn btn-primary pdp-cart-button' onClick={handleAddToCart}><img className='pdp-cart-icon-white' src={CartIconWhite} alt="Add to cart" /> Add to cart</Button>
+        <Button className='btn btn-primary pdp-cart-button' onClick={handleAddToCart} disabled={sizes.length === 0}><img className='pdp-cart-icon-white' src={CartIconWhite} alt="Add to cart" /> Add to cart</Button>
 
         <hr className="pdp-sep" />
 
