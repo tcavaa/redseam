@@ -13,7 +13,7 @@
 .pdp-top h2 {
     font-weight: 300;
     font-size: 14px;
-    color:#10151F;
+    color: var(--text-strong);
     padding:30px 0 49px 0;
 }
 
@@ -61,14 +61,14 @@
     -webkit-appearance: none;
     -moz-appearance: none; 
     background: #fff; 
-    border: 1px solid #E1DFE1; 
-    border-radius: 10px; 
+    border: 1px solid var(--border-color); 
+    border-radius: var(--radius-md); 
     padding: 9px 45px 9px 15px; 
     width: 70px;
     height: 42px;
     font-size: 16px;
     margin-top: 16px;
-    color: #10151F; 
+    color: var(--text-strong); 
 }
 
 .qty-select::after { 
@@ -90,7 +90,7 @@
 .pdp-sep {
 	margin-bottom: 56px;
 	border: 0;
-	border-top: 1px solid #E1DFE1;
+    border-top: 1px solid var(--border-color);
 }
 
 .pdp-details-header {
@@ -104,7 +104,7 @@
     font-size: 20px;
     line-height: 100%;
     letter-spacing: 0%;
-    color: #10151F;
+    color: var(--text-strong);
 }
 .pdp-details-header img {
     width: 90px;
@@ -112,14 +112,14 @@
 .pdp-details-brand {
     font-weight: 400;
     font-size: 16px;
-    color: #3E424A;
+    color: var(--muted);
     margin-top: 7px;
     margin-bottom: 19px;
 }
 .desc {
     font-weight: 400;
     font-size: 16px;
-    color: #3E424A;
+    color: var(--muted);
 }
 
 
@@ -183,7 +183,7 @@
 }
 
 .color-swatch.active {
-	box-shadow: 0 0 0 1px #E1DFE1, 0 0 0 4px #fff, 0 0 0 6px #e6e6e6;
+    box-shadow: 0 0 0 1px var(--border-color), 0 0 0 4px #fff, 0 0 0 6px #e6e6e6;
 }
 
 .size-selector {
@@ -195,18 +195,18 @@
 .size-chip {
 	width: 70px;
 	height: 42px;
-	border-radius: 10px;
-	border: 1px solid #E1DFE1;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
 	background: #fff;
-    color:#10151F;
+    color: var(--text-strong);
 	cursor: pointer;
     font-weight: 400;
     font-size: 16px;
 }
 
 .size-chip.active {
-	border-color: #10151F;
-	background-color: #F8F6F7;
+    border-color: var(--text-strong);
+    background-color: var(--surface-muted);
 }
 
 .pdp-cart-button {

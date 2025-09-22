@@ -7,8 +7,18 @@
 
 :root {
 	--accent: #FF4000;
-	--text: #000000;
+	--text-strong: #10151F;
 	--muted: #3E424A;
+	--border-color: #E1DFE1;
+	--border-light: #F8F6F7;
+	--surface-muted: #F8F6F7;
+	--surface-subtle: #f7f7f7;
+	--radius-sm: 8px;
+	--radius-md: 10px;
+	--radius-lg: 12px;
+	--overlay: rgba(0, 0, 0, .5);
+	--overlay-strong: rgba(0, 0, 0, .6);
+	--shadow-lg: 0 20px 80px rgba(0, 0, 0, .2);
 }
 
 * {
@@ -19,7 +29,7 @@
 body {
 	margin: 0;
 	font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-	color: var(--text);
+	color: var(--text-strong);
 }
 
 .container {
@@ -184,7 +194,7 @@ img.chevron-down {
     font-weight: 500;
     font-size: 12px;
     text-decoration: none;
-    color: var(--text);
+    color: var(--text-strong);
 }
 
 /* Inputs */

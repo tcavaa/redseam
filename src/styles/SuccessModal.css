@@ -1,7 +1,7 @@
 .success-modal {
 	position: fixed;
 	inset: 0;
-	background: rgba(0, 0, 0, .6);
+    background: var(--overlay-strong);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -13,10 +13,10 @@
 	width: 720px;
 	max-width: 90vw;
 	background: #fff;
-	border-radius: 12px;
+    border-radius: var(--radius-lg);
 	padding: 56px 24px 40px;
 	text-align: center;
-	box-shadow: 0 20px 80px rgba(0, 0, 0, .2);
+    box-shadow: var(--shadow-lg);
 }
 
 .success-dialog .close {
@@ -27,7 +27,7 @@
 	border: 0;
 	font-size: 24px;
 	cursor: pointer;
-	color: #3E424A;
+    color: var(--muted);
 }
 
 .success-dialog .icon {
@@ -40,7 +40,7 @@
 	width: 76px;
 	height: 76px;
 	border-radius: 50%;
-	background: #F8F6F7;
+    background: var(--surface-muted);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -49,12 +49,12 @@
 .success-dialog h2 {
 	font-size: 42px;
     font-weight: 600;
-    color:#10151F;
+    color: var(--text-strong);
 	margin: 40px 0 16px 0;
 }
 
 .success-dialog p {
-	color: #3E424A;
+    color: var(--muted);
     font-weight: 400;
     font-size: 14px;
 	margin: 0 0 74px;
