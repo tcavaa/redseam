@@ -7,6 +7,7 @@ import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
 import { Eye } from '../components/ui';
 import { login } from '../api/auth';
+import { ROUTES } from '../constants';
 
 const schema = z.object({
   email: z.string().min(3, 'Email must be at least 3 characters').email('Invalid email'),
@@ -27,7 +28,7 @@ export default function LoginPage() {
     setApiError('');
     try {
       await login(values);
-      navigate('/products');
+      navigate(ROUTES.PRODUCTS);
     } catch (err) {
       setApiError('Email and/or password is incorrect');
     }
@@ -60,7 +61,7 @@ export default function LoginPage() {
           <Button className="btn btn-primary btn-auth" type="submit" disabled={isSubmitting}>
             Log in
           </Button>
-          <p className="auth-alt">Not a member? <a href="/register">Register</a></p>
+          <p className="auth-alt">Not a member? <a href={ROUTES.REGISTER}>Register</a></p>
         </form>
       </div>
     </div>

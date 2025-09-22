@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { memo } from 'react';
 
-export default function ProductGallery({ images = [], activeIndex = 0, onChange }) {
+function ProductGallery({ images = [], activeIndex = 0, onChange }) {
   const active = Math.min(Math.max(activeIndex, 0), images.length - 1);
   return (
     <div className="pdp-gallery">
@@ -21,4 +21,6 @@ export default function ProductGallery({ images = [], activeIndex = 0, onChange 
     </div>
   );
 }
+
+export default memo(ProductGallery);
 

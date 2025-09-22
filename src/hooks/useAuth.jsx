@@ -11,8 +11,13 @@ export function AuthProvider({ children }) {
       return null;
     }
   });
-
-  const isAuthed = !!localStorage.getItem('auth_token');
+  const [token, setToken] = useState(() => {
+    try {
+      return localStorage.getItem('auth_token') || '';
+    } catch {
+      return '';
+    }
+  });
 
   useEffect(() => {
     function sync() {
@@ -22,11 +27,27 @@ export function AuthProvider({ children }) {
       } catch {
         setUser(null);
       }
+      try {
+        setToken(localStorage.getItem('auth_token') || '');
+      } catch {
+        setToken('');
+      }
     }
+
+    function syncStorage(e) {
+      if (!e || (e.key && !['user', 'auth_token'].includes(e.key))) return;
+      sync();
+    }
+
     window.addEventListener('auth:user-updated', sync);
-    return () => window.removeEventListener('auth:user-updated', sync);
+    window.addEventListener('storage', syncStorage);
+    return () => {
+      window.removeEventListener('auth:user-updated', sync);
+      window.removeEventListener('storage', syncStorage);
+    };
   }, []);
 
+  const isAuthed = !!token;
   const value = useMemo(() => ({ user, setUser, isAuthed }), [user, isAuthed]);
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

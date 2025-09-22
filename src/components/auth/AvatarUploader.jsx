@@ -6,6 +6,7 @@ export default function AvatarUploader({ fileList, registerProps, onRemove, erro
   const previewUrl = useFilePreview(fileList);
 
   return (
+    <>
     <div className="avatar-upload">
       {previewUrl ? (
         <>
@@ -25,8 +26,10 @@ export default function AvatarUploader({ fileList, registerProps, onRemove, erro
           <span className="placeholder-text">Upload image</span>
         </label>
       )}
-      {error ? <p className="error-text">{error}</p> : null}
+      
     </div>
+    {error ? <p className="error-text">{error}</p> : null}
+    </>
   );
 }
 

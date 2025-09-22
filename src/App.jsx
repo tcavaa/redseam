@@ -13,6 +13,7 @@ import Cart from './components/cart/Cart';
 const CheckoutPage = lazy(() => import('./pages/CheckoutPage.jsx'));
 import ErrorBoundary from './components/ui/ErrorBoundary.jsx';
 import { AuthProvider } from './hooks/useAuth.jsx';
+import Loading from './components/ui/Loading.jsx';
 
 function RequireAuth({ children }) {
   const authed = !!localStorage.getItem('auth_token');
@@ -31,7 +32,7 @@ export default function App() {
         <CartProvider>
           <Navigation />
           <ErrorBoundary>
-          <Suspense fallback={<div style={{ padding: 40 }}>Loading...</div>}>
+          <Suspense fallback={<Loading style={{ padding: 40 }} />}>
           <Routes>
             <Route path={ROUTES.ROOT} element={<Navigate to={ROUTES.PRODUCTS} />} />
             <Route path={ROUTES.PRODUCTS} element={<RequireAuth><ProductsPage /></RequireAuth>} />

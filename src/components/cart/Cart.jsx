@@ -7,6 +7,8 @@ import Button from '../ui/Button';
 import { useNavigate, useLocation } from 'react-router-dom';
 import OrderTotals from './OrderTotals.jsx';
 import { UI } from '../../constants';
+import { ROUTES } from '../../constants';
+import Loading from '../ui/Loading.jsx';
 
 export default function Cart() {
   const { items, open, setOpen, subtotal, loading } = useCartContext();
@@ -30,7 +32,7 @@ export default function Cart() {
       </div>
       <div className="cart-body">
         {loading ? (
-          <div className="cart-empty">Loading...</div>
+          <div className="cart-empty"><Loading /></div>
         ) : items.length === 0 ? (
           <div className="cart-empty">
             <img src={EmptyCart} alt="Empty cart" />
@@ -50,7 +52,7 @@ export default function Cart() {
         <OrderTotals
           subtotal={subtotal}
           delivery={delivery}
-          onCheckout={() => { setOpen(false); navigate('/checkout'); }}
+          onCheckout={() => { setOpen(false); navigate(ROUTES.CHECKOUT); }}
         />
       )}
       

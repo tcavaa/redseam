@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { useCartContext } from '../../hooks/useCart.jsx';
 
-export default function CartItem({ item }) {
+function CartItem({ item }) {
   const { increment, decrement, remove } = useCartContext();
   const qty = item.quantity || 1;
   return (
@@ -24,4 +24,6 @@ export default function CartItem({ item }) {
     </li>
   );
 }
+
+export default memo(CartItem);
 

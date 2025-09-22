@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, NavLink, useLocation } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useCartContext } from '../../hooks/useCart.jsx';
 import { logout } from '../../api/auth';
 import { useAuth } from '../../hooks/useAuth.jsx';
@@ -12,6 +12,7 @@ export default function Navigation() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { user, isAuthed, setUser } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const avatar = user?.profile_photo || user?.avatar;
 
   // Close dropdown on route change
@@ -41,7 +42,7 @@ export default function Navigation() {
                       <div className="email">{user?.email}</div>
                     </div>
                   </div>
-                  <button className="logout" onClick={() => { logout(); setUser(null); window.location.href = '/'; }}>Log out</button>
+                  <button className="logout" onClick={() => { logout(); setUser(null); navigate(ROUTES.ROOT); }}>Log out</button>
                 </div>
               </div>
             </>

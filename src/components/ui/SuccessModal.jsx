@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, memo } from 'react';
 import Button from './Button';
 import { Done } from '../ui';
 import '../../styles/SuccessModal.css';
 
-export default function SuccessModal({ open, onClose, onContinue }) {
+function SuccessModal({ open, onClose, onContinue }) {
   useEffect(() => {
     function onKey(e) {
       if (e.key === 'Escape') onClose?.();
@@ -32,5 +32,7 @@ export default function SuccessModal({ open, onClose, onContinue }) {
     </div>
   );
 }
+
+export default memo(SuccessModal);
 
 

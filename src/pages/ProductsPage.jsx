@@ -8,6 +8,7 @@ import '../styles/ProductsPage.css';
 import { UI } from '../constants';
 import { Filters as FiltersIcon, ChevronDown, ChevronLeft, ChevronRight } from '../components/ui';
 import Dropdown from '../components/ui/Dropdown.jsx';
+import Loading from '../components/ui/Loading.jsx';
 
 const PAGE_SIZE = UI.PAGE_SIZE;
 
@@ -173,7 +174,7 @@ export default function ProductsPage() {
       ) : null}
 
       {loading ? (
-        <div className="loading">Loading...</div>
+        <Loading style={{ padding: 40 }} />
       ) : (
         <div className="grid">
           {products.map(p => (

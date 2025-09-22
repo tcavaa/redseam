@@ -401,3 +401,27 @@ img.chevron-down {
 	width: 24px;
 }
 
+/* Loading */
+.loading {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.spinner {
+	--size: 24px;
+	width: var(--size);
+	height: var(--size);
+	border-radius: 50%;
+	border: 3px solid #eee;
+	border-top-color: var(--accent);
+	animation: spin 1s linear infinite;
+}
+
+.loading-label { color: #666; font-size: 14px; }
+
+@keyframes spin {
+	from { transform: rotate(0deg); }
+	to { transform: rotate(360deg); }
+}
+

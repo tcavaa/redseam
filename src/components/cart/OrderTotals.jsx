@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { memo } from 'react';
 
-export default function OrderTotals({ subtotal, delivery, onCheckout, disabled }) {
+function OrderTotals({ subtotal, delivery, onCheckout, disabled }) {
   const total = subtotal + (delivery || 0);
   return (
     <div className="cart-footer">
@@ -11,5 +11,7 @@ export default function OrderTotals({ subtotal, delivery, onCheckout, disabled }
     </div>
   );
 }
+
+export default memo(OrderTotals);
 
 

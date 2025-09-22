@@ -9,6 +9,7 @@ import { Eye } from '../components/ui';
 import AvatarUploader from '../components/auth/AvatarUploader.jsx';
 import { useFilePreview } from '../hooks/useFilePreview';
 import { register as registerRequest } from '../api/auth';
+import { ROUTES } from '../constants';
 
 const schema = z
   .object({
@@ -77,7 +78,7 @@ export default function RegisterPage() {
         passwordConfirmation: values.confirmPassword,
         avatar: Array.isArray(values.avatar) ? values.avatar[0] : values.avatar,
       });
-      navigate('/products');
+      navigate(ROUTES.PRODUCTS);
     } catch (err) {
       const message = err?.message || 'Registration failed';
       setApiError(message);
@@ -130,7 +131,7 @@ export default function RegisterPage() {
             onRightIconClick={() => setShowConfirm(s => !s)}
           />
           <Button className="btn btn-primary btn-auth" type="submit" disabled={isSubmitting}>Register</Button>
-          <p className="auth-alt">Already member? <a href="/login">Log in</a></p>
+          <p className="auth-alt">Already member? <a href={ROUTES.LOGIN}>Log in</a></p>
         </form>
       </div>
     </div>

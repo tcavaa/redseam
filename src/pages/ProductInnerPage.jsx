@@ -9,6 +9,7 @@ import '../styles/ProductInner.css';
 import { useCartContext } from '../hooks/useCart.jsx';
 import QuantitySelect from '../components/ui/QuantitySelect.jsx';
 import { mapImagesAndColors } from '../utils/productMapping';
+import Loading from '../components/ui/Loading.jsx';
 
 export default function ProductInnerPage() {
   const { id } = useParams();
@@ -60,7 +61,7 @@ export default function ProductInnerPage() {
   }
 
   if (loading || !product) {
-    return <div className="container" style={{ padding: 40 }}>Loading...</div>;
+    return <div className="container" style={{ padding: 40 }}><Loading /></div>;
   }
 
   return (
