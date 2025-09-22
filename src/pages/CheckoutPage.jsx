@@ -37,7 +37,7 @@ export default function CheckoutPage() {
       .regex(/^\d+$/, 'Zip code must be numbers only'),
   });
 
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm({
+  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
       name: '',
@@ -68,6 +68,9 @@ export default function CheckoutPage() {
       });
       setSuccess(true);
       await refresh();
+      // Clear the form – keep email prefilled from stored user
+      reset({ name: '', surname: '', email: storedUser?.email || '', address: '', zipCode: '' });
+      setTopError('');
     } finally {
       setSubmitting(false);
     }
