@@ -24,6 +24,7 @@ export default function ProductsPage() {
   const [sortOpen, setSortOpen] = useState(false);
   const [priceFromInput, setPriceFromInput] = useState('');
   const [priceToInput, setPriceToInput] = useState('');
+  const [filterError, setFilterError] = useState('');
 
   const page = Number(getParam('page', 1));
   const sort = getParam('sort', '-created_at');
@@ -110,8 +111,28 @@ export default function ProductsPage() {
     if (filterOpen) {
       setPriceFromInput(priceFrom);
       setPriceToInput(priceTo);
+      setFilterError('');
     }
   }, [filterOpen]);
+
+  const onPriceFromChange = (e) => {
+    const digits = e.target.value.replace(/\D/g, '');
+    setPriceFromInput(digits);
+    if (filterError) setFilterError('');
+  };
+  const onPriceToChange = (e) => {
+    const digits = e.target.value.replace(/\D/g, '');
+    setPriceToInput(digits);
+    if (filterError) setFilterError('');
+  };
+
+  const isRangeInvalid = useMemo(() => {
+    if (!priceFromInput || !priceToInput) return false;
+    const from = Number(priceFromInput);
+    const to = Number(priceToInput);
+    if (Number.isNaN(from) || Number.isNaN(to)) return true;
+    return from > to;
+  }, [priceFromInput, priceToInput]);
 
   const pages = buildPagination(page, totalPages || 1);
 
@@ -136,10 +157,41 @@ export default function ProductsPage() {
                 <Dropdown.Panel>
                   <h4>Select price</h4>
                   <div className="row long-panel">
-                    <input type="number" placeholder="From *" value={priceFromInput} onChange={e => setPriceFromInput(e.target.value)} />
-                    <input type="number" placeholder="To *" value={priceToInput} onChange={e => setPriceToInput(e.target.value)} />
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      placeholder="From *"
+                      value={priceFromInput}
+                      onChange={onPriceFromChange}
+                      onKeyDown={(e) => { if (["e","E","+","-","."].includes(e.key)) e.preventDefault(); }}
+                    />
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      placeholder="To *"
+                      value={priceToInput}
+                      onChange={onPriceToChange}
+                      onKeyDown={(e) => { if (["e","E","+","-","."].includes(e.key)) e.preventDefault(); }}
+                    />
                   </div>
-                  <button className="btn btn-primary" onClick={() => { updateParams({ 'price_from': priceFromInput, 'price_to': priceToInput }); setFilterOpen(false); }}>Apply</button>
+                  {isRangeInvalid ? <p className="error-text" style={{ marginTop: 4 }}>From must be less than or equal to To</p> : null}
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => {
+                      if (isRangeInvalid) {
+                        setFilterError('From must be less than or equal to To');
+                        return;
+                      }
+                      setFilterError('');
+                      updateParams({ 'price_from': priceFromInput, 'price_to': priceToInput });
+                      setFilterOpen(false);
+                    }}
+                    disabled={isRangeInvalid}
+                  >
+                    Apply
+                  </button>
                 </Dropdown.Panel>
               </Dropdown>
             </div>
