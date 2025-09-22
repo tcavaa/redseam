@@ -51,6 +51,13 @@
 	position: relative;
 }
 
+.menu-backdrop {
+	position: fixed;
+	inset: 0;
+	background: transparent;
+	z-index: 4;
+}
+
 .menu {
 	position: relative;
     height: 25px;

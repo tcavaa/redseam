@@ -1,18 +1,26 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useCartContext } from '../../hooks/useCart.jsx';
 import CartItem from './CartItem';
 import { EmptyCart } from '../ui';
 import '../../styles/Cart.css';
 import Button from '../ui/Button';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 export default function Cart() {
   const { items, open, setOpen, subtotal, loading } = useCartContext();
   const navigate = useNavigate();
+  const location = useLocation();
   const delivery = 5;
   const total = subtotal + (items.length ? delivery : 0);
 
+  useEffect(() => {
+    if (open) setOpen(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname]);
+
   return (
+    <>
+    {open ? <div className="cart-backdrop" onClick={() => setOpen(false)} /> : null}
     <aside className={`cart-drawer ${open ? 'open' : ''}`} role="dialog" aria-modal>
       <div className="cart-header">
         <h2>Shopping cart ({items.length})</h2>
@@ -55,6 +63,7 @@ export default function Cart() {
         )}
       
     </aside>
+    </>
   );
 }
 

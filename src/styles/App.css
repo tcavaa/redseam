@@ -81,8 +81,9 @@ body {
 }
 
 .user-menu {
-	position: relative;
-	display: inline-block;
+    position: relative;
+    display: inline-block;
+    z-index: 50;
 }
 
 .user-menu .avatar {
@@ -127,10 +128,18 @@ img.chevron-down {
 	min-width: 220px;
 	box-shadow: 0 10px 30px rgba(0, 0, 0, .08);
 	padding: 8px;
+    z-index: 60;
 }
 
 .user-menu.open .dropdown {
 	display: block;
+}
+
+.dropdown-backdrop {
+	position: fixed;
+	inset: 0;
+	background: transparent;
+    z-index: 40;
 }
 
 .user-row {

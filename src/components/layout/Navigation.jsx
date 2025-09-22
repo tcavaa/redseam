@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useCartContext } from '../../hooks/useCart.jsx';
 import { logout } from '../../api/auth';
 import { useAuth } from '../../hooks/useAuth.jsx';
@@ -11,7 +11,13 @@ export default function Navigation() {
   const { setOpen } = useCartContext();
   const [menuOpen, setMenuOpen] = useState(false);
   const { user, isAuthed, setUser } = useAuth();
+  const location = useLocation();
   const avatar = user?.profile_photo || user?.avatar;
+
+  // Close dropdown on route change
+  useEffect(() => {
+    if (menuOpen) setMenuOpen(false);
+  }, [location.pathname]);
   return (
     <header className="nav">
       <div className="container">
@@ -20,6 +26,7 @@ export default function Navigation() {
           {isAuthed ? (
             <>
               <button className="link" onClick={() => setOpen(true)} aria-label="Cart"><img className='cart-icon' src={CartIcon} alt="Cart" /></button>
+              {menuOpen ? <div className="dropdown-backdrop" onClick={() => setMenuOpen(false)} /> : null}
               <div className={`user-menu ${menuOpen ? 'open' : ''}`}>
                 <button className="avatar" onClick={() => setMenuOpen(o => !o)} aria-haspopup="menu" aria-expanded={menuOpen}>
                   {avatar ? <img className='avatar-img' src={avatar} alt={user?.name || 'user'} /> : <span className="placeholder" />}

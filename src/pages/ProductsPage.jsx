@@ -146,7 +146,10 @@ export default function ProductsPage() {
             ) : null}
           </div>
           <div className="toolbar">
-            <div className="menu">
+            {(filterOpen || sortOpen) ? (
+              <div className="menu-backdrop" onClick={() => { setFilterOpen(false); setSortOpen(false); }} />
+            ) : null}
+            <div className="menu" tabIndex={-1} onBlur={e => { if (!e.currentTarget.contains(e.relatedTarget)) setFilterOpen(false); }}>
               <button className="menu-trigger" onClick={() => { setFilterOpen(o => !o); setSortOpen(false); }}>
                 <img className='filters-icon-menu' src={FiltersIcon} alt="Filters" />
                 <span>Filter</span>
@@ -163,7 +166,7 @@ export default function ProductsPage() {
               ) : null}
             </div>
 
-            <div className="menu">
+            <div className="menu" tabIndex={-1} onBlur={e => { if (!e.currentTarget.contains(e.relatedTarget)) setSortOpen(false); }}>
               <button className="menu-trigger" onClick={() => { setSortOpen(o => !o); setFilterOpen(false); }}>
                 <span>{sortLabel}</span>
                 <img className='chevron-down-menu' src={ChevronDown} alt="Chevron Down" />

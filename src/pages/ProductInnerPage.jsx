@@ -117,6 +117,9 @@ export default function ProductInnerPage() {
 
   return (
     <div className="container pdp">
+      <div className='pdp-top'>
+        <h2>Listing / Product</h2>
+      </div>
       <div className="pdp-left">
         <ProductGallery images={images} activeIndex={activeImage} onChange={selectIndex} />
       </div>

@@ -30,7 +30,11 @@ export default function CheckoutPage() {
     surname: z.string().trim().min(1, 'Surname is required'),
     email: z.string().trim().min(1, 'Email is required').email('Invalid email'),
     address: z.string().trim().min(1, 'Address is required'),
-    zipCode: z.string().trim().min(3, 'Zip code is required'),
+    zipCode: z
+      .string()
+      .trim()
+      .min(1, 'Zip code is required')
+      .regex(/^\d+$/, 'Zip code must be numbers only'),
   });
 
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm({
@@ -46,8 +50,13 @@ export default function CheckoutPage() {
 
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [topError, setTopError] = useState('');
 
   async function onSubmit(values) {
+    if (items.length === 0) {
+      setTopError('Cart empty — nothing to checkout.');
+      return;
+    }
     setSubmitting(true);
     try {
       await apiCheckout({
@@ -71,28 +80,38 @@ export default function CheckoutPage() {
         <div className="checkout-form">
           <div className="panel">
             <h3>Order details</h3>
+            {topError ? <p className="error-text" style={{ marginTop: 8 }}>{topError}</p> : null}
             <form onSubmit={handleSubmit(onSubmit)} className="form-grid">
               <div className="field">
-                <input className="checkout-input" placeholder="Name" {...register('name')} />
+                <input className={`checkout-input ${errors.name ? 'input-error' : ''}`} placeholder="Name" {...register('name')} />
                 {errors.name?.message ? <p className="error-text">{errors.name.message}</p> : null}
               </div>
               <div className="field">
-                <input className="checkout-input" placeholder="Surname" {...register('surname')} />
+                <input className={`checkout-input ${errors.surname ? 'input-error' : ''}`} placeholder="Surname" {...register('surname')} />
                 {errors.surname?.message ? <p className="error-text">{errors.surname.message}</p> : null}
               </div>
               <div className="field field-span2">
                 <div className="input-with-icon">
                   <span className="left-icon"><img src={Envelope} alt="Email" /></span>
-                  <input className="checkout-input has-icon" placeholder="Email" type="email" {...register('email')} />
+                  <input className={`checkout-input has-icon ${errors.email ? 'input-error' : ''}`} placeholder="Email" type="email" {...register('email')} />
                 </div>
                 {errors.email?.message ? <p className="error-text">{errors.email.message}</p> : null}
               </div>
               <div className="field">
-                <input className="checkout-input" placeholder="Address" {...register('address')} />
+                <input className={`checkout-input ${errors.address ? 'input-error' : ''}`} placeholder="Address" {...register('address')} />
                 {errors.address?.message ? <p className="error-text">{errors.address.message}</p> : null}
               </div>
               <div className="field">
-                <input className="checkout-input" placeholder="Zip code" {...register('zipCode')} />
+                <input
+                  className={`checkout-input ${errors.zipCode ? 'input-error' : ''}`}
+                  placeholder="Zip code"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  onKeyDown={(e) => {
+                    if (["e","E","+","-","."] .includes(e.key)) e.preventDefault();
+                  }}
+                  {...register('zipCode')}
+                />
                 {errors.zipCode?.message ? <p className="error-text">{errors.zipCode.message}</p> : null}
               </div>
               <div className="spacer" />
