@@ -9,7 +9,7 @@ import Filters from '../../assets/icons/adjustments-horizontal.png';
 import Envelope from '../../assets/icons/envelope.png';
 import Eye from '../../assets/icons/eye.png';
 import EmptyCart from '../../assets/icons/emptyCart.png';
-import Done from '../../assets/icons/done.png';
+import Done from '../../assets/icons/Done.png';
 
 export { CartIcon, CartIconWhite, UserIcon, ChevronDown, ChevronLeft, ChevronRight, CameraIcon, Filters, Envelope, Eye, EmptyCart, Done };
 
