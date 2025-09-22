@@ -104,12 +104,15 @@
 	border: 1px solid #E1DFE1;
 	border-radius: 8px;
 	padding: 16px;
-	width: 392px;
+	
 	z-index: 5; 
 }
 
+.long-panel {
+	width: 392px;
+}
 .short-panel {
-    width: 223px;
+    width: 200px;
 }
 
 .menu-panel h4 {

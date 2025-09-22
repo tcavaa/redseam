@@ -7,6 +7,7 @@ import { checkout as apiCheckout } from '../api/cart';
 import SuccessModal from '../components/ui/SuccessModal.jsx';
 import { useNavigate } from 'react-router-dom';
 import CartItem from '../components/cart/CartItem.jsx';
+import OrderTotals from '../components/cart/OrderTotals.jsx';
 import { Envelope } from '../components/ui';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -129,21 +130,11 @@ export default function CheckoutPage() {
             ))}
           </ul>
 
-          <div className="cart-footer">
-            <div className="row">
-              <span>Items subtotal</span>
-              <span>$ {subtotal}</span>
-            </div>
-            <div className="row">
-              <span>Delivery</span>
-              <span>$ {items.length ? delivery : 0}</span>
-            </div>
-            <div className="total">
-              <span>Total</span>
-              <span>$ {total}</span>
-            </div>
-            <Button className="btn btn-primary btn-cart-checkout" disabled={submitting || isSubmitting} onClick={handleSubmit(onSubmit)}>Pay</Button>
-          </div>
+          <OrderTotals
+            subtotal={subtotal}
+            delivery={delivery}
+          />
+          <Button className="btn btn-primary btn-cart-checkout" disabled={submitting || isSubmitting} onClick={handleSubmit(onSubmit)}>Pay</Button>
         </div>
       </div>
 

@@ -1,40 +1,19 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useQueryParams } from '../hooks/useQueryParams';
+import { parsePageFromUrl, buildPagination } from '../utils/pagination';
 import { fetchProducts } from '../api/products';
 import ProductCard from '../components/product/ProductCard';
 import '../styles/ProductsPage.css';
 import { UI } from '../constants';
 import { Filters as FiltersIcon, ChevronDown, ChevronLeft, ChevronRight } from '../components/ui';
+import Dropdown from '../components/ui/Dropdown.jsx';
 
 const PAGE_SIZE = UI.PAGE_SIZE;
 
-function parsePageFromUrl(url) {
-  try {
-    const u = new URL(url);
-    const p = u.searchParams.get('page');
-    return p ? Number(p) : undefined;
-  } catch (_) {
-    return undefined;
-  }
-}
-
-function buildPagination(current, total) {
-  const pages = [];
-  if (!total || total <= 1) return [1];
-  const add = p => pages.push(p);
-  const show = (p) => p >= 1 && p <= total;
-  add(1);
-  const start = Math.max(2, current - 1);
-  const end = Math.min(total - 1, current + 1);
-  if (start > 2) pages.push('...');
-  for (let p = start; p <= end; p++) add(p);
-  if (end < total - 1) pages.push('...');
-  if (total > 1) add(total);
-  return pages;
-}
-
 export default function ProductsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const { getParam, setParam, setParamsBatch } = useQueryParams();
   const [products, setProducts] = useState([]);
   const [meta, setMeta] = useState({ current_page: 1, per_page: PAGE_SIZE, from: 0, to: 0 });
   const [links, setLinks] = useState({});
@@ -45,10 +24,10 @@ export default function ProductsPage() {
   const [priceFromInput, setPriceFromInput] = useState('');
   const [priceToInput, setPriceToInput] = useState('');
 
-  const page = Number(searchParams.get('page') || 1);
-  const sort = searchParams.get('sort') || '-created_at';
-  const priceFrom = searchParams.get('price_from') || '';
-  const priceTo = searchParams.get('price_to') || '';
+  const page = Number(getParam('page', 1));
+  const sort = getParam('sort', '-created_at');
+  const priceFrom = getParam('price_from', '');
+  const priceTo = getParam('price_to', '');
 
   const totalPages = useMemo(() => {
     if (!total || !meta?.per_page) return undefined;
@@ -146,41 +125,39 @@ export default function ProductsPage() {
             ) : null}
           </div>
           <div className="toolbar">
-            {(filterOpen || sortOpen) ? (
-              <div className="menu-backdrop" onClick={() => { setFilterOpen(false); setSortOpen(false); }} />
-            ) : null}
-            <div className="menu" tabIndex={-1} onBlur={e => { if (!e.currentTarget.contains(e.relatedTarget)) setFilterOpen(false); }}>
-              <button className="menu-trigger" onClick={() => { setFilterOpen(o => !o); setSortOpen(false); }}>
-                <img className='filters-icon-menu' src={FiltersIcon} alt="Filters" />
-                <span>Filter</span>
-              </button>
-              {filterOpen ? (
-                <div className="menu-panel">
+            {(filterOpen || sortOpen) ? (<div className="menu-backdrop" onClick={() => { setFilterOpen(false); setSortOpen(false); }} />) : null}
+            <div className="menu">
+              <Dropdown open={filterOpen} onOpenChange={(v) => { setFilterOpen(v); if (v) setSortOpen(false); }}>
+                <Dropdown.Trigger>
+                  <img className='filters-icon-menu' src={FiltersIcon} alt="Filters" />
+                  <span>Filter</span>
+                </Dropdown.Trigger>
+                <Dropdown.Panel>
                   <h4>Select price</h4>
-                  <div className="row">
+                  <div className="row long-panel">
                     <input type="number" placeholder="From *" value={priceFromInput} onChange={e => setPriceFromInput(e.target.value)} />
                     <input type="number" placeholder="To *" value={priceToInput} onChange={e => setPriceToInput(e.target.value)} />
                   </div>
                   <button className="btn btn-primary" onClick={() => { updateParams({ 'price_from': priceFromInput, 'price_to': priceToInput }); setFilterOpen(false); }}>Apply</button>
-                </div>
-              ) : null}
+                </Dropdown.Panel>
+              </Dropdown>
             </div>
 
-            <div className="menu" tabIndex={-1} onBlur={e => { if (!e.currentTarget.contains(e.relatedTarget)) setSortOpen(false); }}>
-              <button className="menu-trigger" onClick={() => { setSortOpen(o => !o); setFilterOpen(false); }}>
-                <span>{sortLabel}</span>
-                <img className='chevron-down-menu' src={ChevronDown} alt="Chevron Down" />
-              </button>
-              {sortOpen ? (
-                <div className="menu-panel short-panel">
+            <div className="menu">
+              <Dropdown open={sortOpen} onOpenChange={(v) => { setSortOpen(v); if (v) setFilterOpen(false); }}>
+                <Dropdown.Trigger>
+                  <span>{sortLabel}</span>
+                  <img className='chevron-down-menu' src={ChevronDown} alt="Chevron Down" />
+                </Dropdown.Trigger>
+                <Dropdown.Panel>
                   <h4 className='sort-by-title'>Sort by</h4>
-                  <ul className="menu-list">
+                  <ul className="menu-list short-panel">
                     <li><button onClick={() => { updateParam('sort', '-created_at'); setSortOpen(false); }}>New products first</button></li>
                     <li><button onClick={() => { updateParam('sort', 'price'); setSortOpen(false); }}>Price, low to high</button></li>
                     <li><button onClick={() => { updateParam('sort', '-price'); setSortOpen(false); }}>Price, high to low</button></li>
                   </ul>
-                </div>
-              ) : null}
+                </Dropdown.Panel>
+              </Dropdown>
             </div>
           </div>
         </div>

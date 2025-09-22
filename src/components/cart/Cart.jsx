@@ -5,13 +5,15 @@ import { EmptyCart } from '../ui';
 import '../../styles/Cart.css';
 import Button from '../ui/Button';
 import { useNavigate, useLocation } from 'react-router-dom';
+import OrderTotals from './OrderTotals.jsx';
+import { UI } from '../../constants';
 
 export default function Cart() {
   const { items, open, setOpen, subtotal, loading } = useCartContext();
   const navigate = useNavigate();
   const location = useLocation();
-  const delivery = 5;
-  const total = subtotal + (items.length ? delivery : 0);
+  const delivery = items.length ? UI.DELIVERY_FEE : 0;
+  const total = subtotal + delivery;
 
   useEffect(() => {
     if (open) setOpen(false);
@@ -45,22 +47,12 @@ export default function Cart() {
         )}
       </div>
       { items.length > 0 && (
-        <div className="cart-footer">
-          <div className="row">
-            <span>Items subtotal</span>
-            <span>$ {subtotal}</span>
-          </div>
-          <div className="row">
-            <span>Delivery</span>
-            <span>$ {items.length ? delivery : 0}</span>
-          </div>
-          <div className="total">
-            <span>Total</span>
-            <span>$ {total}</span>
-          </div>
-          <Button className="btn btn-primary btn-cart-checkout" onClick={() => { setOpen(false); navigate('/checkout'); }}>Go to checkout</Button>
-        </div>
-        )}
+        <OrderTotals
+          subtotal={subtotal}
+          delivery={delivery}
+          onCheckout={() => { setOpen(false); navigate('/checkout'); }}
+        />
+      )}
       
     </aside>
     </>

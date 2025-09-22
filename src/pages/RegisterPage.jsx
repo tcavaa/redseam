@@ -1,11 +1,13 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
-import { Eye, CameraIcon } from '../components/ui';
+import { Eye } from '../components/ui';
+import AvatarUploader from '../components/auth/AvatarUploader.jsx';
+import { useFilePreview } from '../hooks/useFilePreview';
 import { register as registerRequest } from '../api/auth';
 
 const schema = z
@@ -55,19 +57,7 @@ export default function RegisterPage() {
   const [apiError, setApiError] = useState('');
 
   const avatarFile = watch('avatar');
-
-const avatarPreview = useMemo(() => {
-  if (!avatarFile || avatarFile.length === 0) return null;
-  const file = avatarFile[0];
-  if (!(file instanceof File)) return null;
-  return URL.createObjectURL(file);
-}, [avatarFile]);
-
-useEffect(() => {
-  return () => {
-    if (avatarPreview) URL.revokeObjectURL(avatarPreview);
-  };
-}, [avatarPreview]);
+  const avatarPreview = useFilePreview(avatarFile);
 
   const avatarRegister = register('avatar', {
     validate: fileList => {
@@ -110,28 +100,12 @@ useEffect(() => {
       <div className="auth-hero" />
       <div className="auth-panel auth-panel-register">
         <h1 className="auth-title">Registration</h1>
-        {errors.avatar?.message ? <p className="error-text">{errors.avatar.message}</p> : null}
-        <div className="avatar-upload">
-          
-          {avatarPreview ? (
-            <>
-              <div className="avatar-preview"><img src={avatarPreview} alt="Avatar preview" /></div>
-              <label className="avatar-actions">
-                <input type="file" accept="image/*" {...avatarRegister} hidden />
-                <span>Upload new</span>
-              </label>
-              <button type="button" className="link" onClick={() => { setValue('avatar', null); clearErrors('avatar'); }}>Remove</button>
-            </>
-          ) : (
-            <label className="avatar-placeholder">
-              <input type="file" accept="image/*" {...avatarRegister} hidden />
-              <div className="avatar-circle">
-                <img className="camera-icon" src={CameraIcon} alt="Upload" />
-              </div>
-              <span className="placeholder-text">Upload image</span>
-            </label>
-          )}
-        </div>
+        <AvatarUploader
+          fileList={avatarFile}
+          registerProps={avatarRegister}
+          onRemove={() => { setValue('avatar', null); clearErrors('avatar'); }}
+          error={errors.avatar?.message}
+        />
         <form onSubmit={handleSubmit(onSubmit)} className="auth-form">
           <Input name="username" label="Username" register={register} error={errors.username?.message} required />
           <Input name="email" label="Email" register={register} error={errors.email?.message} required />
