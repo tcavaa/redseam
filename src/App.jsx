@@ -14,6 +14,7 @@ const CheckoutPage = lazy(() => import('./pages/CheckoutPage.jsx'));
 import ErrorBoundary from './components/ui/ErrorBoundary.jsx';
 import { AuthProvider } from './hooks/useAuth.jsx';
 import Loading from './components/ui/Loading.jsx';
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage.jsx'));
 
 function RequireAuth({ children }) {
   const authed = !!localStorage.getItem('auth_token');
@@ -35,11 +36,12 @@ export default function App() {
           <Suspense fallback={<Loading style={{ padding: 40 }} />}>
           <Routes>
             <Route path={ROUTES.ROOT} element={<Navigate to={ROUTES.PRODUCTS} />} />
-            <Route path={ROUTES.PRODUCTS} element={<RequireAuth><ProductsPage /></RequireAuth>} />
-            <Route path={ROUTES.PRODUCT()} element={<RequireAuth><ProductInnerPage /></RequireAuth>} />
+            <Route path={ROUTES.PRODUCTS} element={<ProductsPage />} />
+            <Route path={ROUTES.PRODUCT()} element={<ProductInnerPage />} />
             <Route path={ROUTES.LOGIN} element={<RedirectIfAuthed><LoginPage /></RedirectIfAuthed>} />
             <Route path={ROUTES.REGISTER} element={<RedirectIfAuthed><RegisterPage /></RedirectIfAuthed>} />
             <Route path={ROUTES.CHECKOUT} element={<RequireAuth><CheckoutPage /></RequireAuth>} />
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
           </Suspense>
           </ErrorBoundary>

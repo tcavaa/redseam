@@ -27,14 +27,14 @@ export default function CheckoutPage() {
   }, []);
 
   const schema = z.object({
-    name: z.string().trim().min(1, 'Name is required'),
-    surname: z.string().trim().min(1, 'Surname is required'),
+    name: z.string().trim().min(3, 'Name must be at least 3 characters'),
+    surname: z.string().trim().min(3, 'Surname must be at least 3 characters'),
     email: z.string().trim().min(1, 'Email is required').email('Invalid email'),
-    address: z.string().trim().min(1, 'Address is required'),
+    address: z.string().trim().min(3, 'Address must be at least 3 characters'),
     zipCode: z
       .string()
       .trim()
-      .min(1, 'Zip code is required')
+      .min(2, 'Zip code must be at least 2 digits')
       .regex(/^\d+$/, 'Zip code must be numbers only'),
   });
 
@@ -112,7 +112,7 @@ export default function CheckoutPage() {
                   inputMode="numeric"
                   pattern="[0-9]*"
                   onKeyDown={(e) => {
-                    if (["e","E","+","-","."] .includes(e.key)) e.preventDefault();
+                    if (["e","E","+","-","."].includes(e.key)) e.preventDefault();
                   }}
                   {...register('zipCode')}
                 />

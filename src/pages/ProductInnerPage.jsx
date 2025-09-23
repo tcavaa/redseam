@@ -10,12 +10,16 @@ import { useCartContext } from '../hooks/useCart.jsx';
 import QuantitySelect from '../components/ui/QuantitySelect.jsx';
 import { mapImagesAndColors } from '../utils/productMapping';
 import Loading from '../components/ui/Loading.jsx';
+import { useAuth } from '../hooks/useAuth.jsx';
+import NotFoundPage from './NotFoundPage.jsx';
 
 export default function ProductInnerPage() {
   const { id } = useParams();
   const { add } = useCartContext();
+  const { isAuthed } = useAuth();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
   const [activeImage, setActiveImage] = useState(0);
   const [activeColor, setActiveColor] = useState(0);
   const [activeSize, setActiveSize] = useState(0);
@@ -24,14 +28,20 @@ export default function ProductInnerPage() {
   useEffect(() => {
     let mounted = true;
     setLoading(true);
+    setNotFound(false);
     fetchProductById(id)
       .then(data => {
         if (!mounted) return;
+        if (!data || !data.id) {
+          setNotFound(true);
+          return;
+        }
         setProduct(data);
         setActiveImage(0);
         setActiveColor(0);
         setActiveSize(0);
       })
+      .catch(() => { if (mounted) setNotFound(true); })
       .finally(() => mounted && setLoading(false));
     return () => {
       mounted = false;
@@ -52,7 +62,7 @@ export default function ProductInnerPage() {
   }
 
   async function handleAddToCart() {
-    if (!product) return;
+    if (!product || !isAuthed) return;
     await add(product.id, {
       quantity,
       color: (colors[activeColor]?.name || colors[activeColor]?.label || '').trim().toLowerCase(),
@@ -60,8 +70,12 @@ export default function ProductInnerPage() {
     });
   }
 
-  if (loading || !product) {
+  if (loading) {
     return <div className="container" style={{ padding: 40 }}><Loading /></div>;
+  }
+
+  if (notFound || !product) {
+    return <NotFoundPage message="Product not found" />;
   }
 
   return (
@@ -100,7 +114,7 @@ export default function ProductInnerPage() {
           <QuantitySelect value={quantity} onChange={setQuantity} />
         </div>
 
-        <Button className='btn btn-primary pdp-cart-button' onClick={handleAddToCart} disabled={sizes.length === 0}><img className='pdp-cart-icon-white' src={CartIconWhite} alt="Add to cart" /> Add to cart</Button>
+        <Button className='btn btn-primary pdp-cart-button' onClick={handleAddToCart} disabled={sizes.length === 0 || !isAuthed}><img className='pdp-cart-icon-white' src={CartIconWhite} alt="Add to cart" /> Add to cart</Button>
 
         <hr className="pdp-sep" />
 
