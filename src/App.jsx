@@ -9,21 +9,21 @@ const LoginPage = lazy(() => import('./pages/LoginPage'));
 const RegisterPage = lazy(() => import('./pages/RegisterPage'));
 import './styles/App.css';
 import { CartProvider } from './hooks/useCart.jsx';
-import Cart from './components/cart/Cart';
+const Cart = lazy(() => import('./components/cart/Cart'));
 const CheckoutPage = lazy(() => import('./pages/CheckoutPage.jsx'));
 import ErrorBoundary from './components/ui/ErrorBoundary.jsx';
-import { AuthProvider } from './hooks/useAuth.jsx';
+import { AuthProvider, useAuth } from './hooks/useAuth.jsx';
 import Loading from './components/ui/Loading.jsx';
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage.jsx'));
 
 function RequireAuth({ children }) {
-  const authed = !!localStorage.getItem('auth_token');
-  return authed ? children : <Navigate to={ROUTES.LOGIN} />;
+  const { isAuthed } = useAuth();
+  return isAuthed ? children : <Navigate to={ROUTES.LOGIN} />;
 }
 
 function RedirectIfAuthed({ children }) {
-  const authed = !!localStorage.getItem('auth_token');
-  return authed ? <Navigate to={ROUTES.PRODUCTS} /> : children;
+  const { isAuthed } = useAuth();
+  return isAuthed ? <Navigate to={ROUTES.PRODUCTS} /> : children;
 }
 
 export default function App() {
@@ -45,7 +45,9 @@ export default function App() {
           </Routes>
           </Suspense>
           </ErrorBoundary>
-          <Cart />
+          <Suspense fallback={null}>
+            <Cart />
+          </Suspense>
         </CartProvider>
       </AuthProvider>
     </BrowserRouter>

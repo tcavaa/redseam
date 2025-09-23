@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useCartContext } from '../../hooks/useCart.jsx';
-import { logout } from '../../api/auth';
 import { useAuth } from '../../hooks/useAuth.jsx';
 import logo from '../../assets/logo.png';
 import { CartIcon, ChevronDown, UserIcon } from '../ui';
@@ -10,7 +9,7 @@ import { ROUTES } from '../../constants';
 export default function Navigation() {
   const { setOpen } = useCartContext();
   const [menuOpen, setMenuOpen] = useState(false);
-  const { user, isAuthed, setUser } = useAuth();
+  const { user, isAuthed, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const avatar = user?.profile_photo || user?.avatar;
@@ -42,7 +41,7 @@ export default function Navigation() {
                       <div className="email">{user?.email}</div>
                     </div>
                   </div>
-                  <button className="logout" onClick={() => { logout(); setUser(null); navigate(ROUTES.ROOT); }}>Log out</button>
+                  <button className="logout" onClick={() => { logout(); navigate(ROUTES.ROOT); }}>Log out</button>
                 </div>
               </div>
             </>

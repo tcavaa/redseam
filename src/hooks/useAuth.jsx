@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { logout as apiLogout } from '../api/auth';
 
 const AuthContext = createContext(null);
 
@@ -48,7 +49,17 @@ export function AuthProvider({ children }) {
   }, []);
 
   const isAuthed = !!token;
-  const value = useMemo(() => ({ user, setUser, isAuthed }), [user, isAuthed]);
+
+  function logout() {
+    try {
+      apiLogout();
+    } finally {
+      setUser(null);
+      setToken('');
+    }
+  }
+
+  const value = useMemo(() => ({ user, setUser, isAuthed, logout }), [user, isAuthed]);
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 

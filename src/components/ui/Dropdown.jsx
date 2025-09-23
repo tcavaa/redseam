@@ -6,7 +6,11 @@ export default function Dropdown({ open: controlled, onOpenChange, children }) {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
   const isControlled = controlled != null;
   const open = isControlled ? controlled : uncontrolledOpen;
-  const setOpen = onOpenChange || setUncontrolledOpen;
+  const setOpen = (next) => {
+    const value = typeof next === 'function' ? next(open) : next;
+    if (onOpenChange) onOpenChange(Boolean(value));
+    else setUncontrolledOpen(Boolean(value));
+  };
   const value = useMemo(() => ({ open, setOpen }), [open]);
   return <DropdownContext.Provider value={value}>{children}</DropdownContext.Provider>;
 }
@@ -14,7 +18,7 @@ export default function Dropdown({ open: controlled, onOpenChange, children }) {
 Dropdown.Trigger = function Trigger({ children }) {
   const ctx = useContext(DropdownContext);
   return (
-    <button className="menu-trigger" onClick={() => ctx.setOpen(o => !o)} aria-expanded={ctx.open}>
+    <button className="menu-trigger" onClick={() => ctx.setOpen(!ctx.open)} aria-expanded={ctx.open}>
       {children}
     </button>
   );

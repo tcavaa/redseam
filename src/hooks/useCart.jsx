@@ -26,7 +26,7 @@ export function CartProvider({ children }) {
   }, []);
 
   const refresh = useCallback(async () => {
-    if (!localStorage.getItem('auth_token')) {
+    if (!isAuthed) {
       persist([]);
       return;
     }
@@ -46,7 +46,7 @@ export function CartProvider({ children }) {
     } finally {
       setLoading(false);
     }
-  }, [persist]);
+  }, [persist, isAuthed]);
 
   // React to auth changes via context (login/logout or user switch within the app)
   useEffect(() => {
@@ -65,7 +65,7 @@ export function CartProvider({ children }) {
   const totalQuantity = useMemo(() => calculateTotalCartQuantity(items), [items]);
 
   const add = useCallback(async (productId, { quantity = 1, color, size } = {}) => {
-    if (!localStorage.getItem('auth_token')) return;
+    if (!isAuthed) return;
     setItems(prev => {
       const existing = findCartItem(prev, productId, { color, size });
       if (existing) {
@@ -86,26 +86,26 @@ export function CartProvider({ children }) {
     } finally {
       setOpen(true);
     }
-  }, [refresh]);
+  }, [refresh, isAuthed]);
 
   const increment = useCallback(async (productId, currentQuantity) => {
-    if (!localStorage.getItem('auth_token')) return;
+    if (!isAuthed) return;
     await apiUpdate(productId, { quantity: currentQuantity + 1 });
     await refresh();
-  }, [refresh]);
+  }, [refresh, isAuthed]);
 
   const decrement = useCallback(async (productId, currentQuantity) => {
-    if (!localStorage.getItem('auth_token')) return;
+    if (!isAuthed) return;
     const next = Math.max(1, currentQuantity - 1);
     await apiUpdate(productId, { quantity: next });
     await refresh();
-  }, [refresh]);
+  }, [refresh, isAuthed]);
 
   const remove = useCallback(async (productId) => {
-    if (!localStorage.getItem('auth_token')) return;
+    if (!isAuthed) return;
     await apiRemove(productId);
     await refresh();
-  }, [refresh]);
+  }, [refresh, isAuthed]);
 
   const value = { items, subtotal, totalQuantity, open, setOpen, loading, add, increment, decrement, remove, refresh };
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

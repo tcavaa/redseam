@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 
-export default function Button({ children, type = 'button', variant = 'primary', ...rest }) {
+const Button = forwardRef(function Button({ children, type = 'button', variant = 'primary', className = '', ...rest }, ref) {
+  const classes = `btn btn-${variant}${className ? ' ' + className : ''}`;
   return (
-    <button type={type} className={`btn btn-${variant}`} {...rest}>
+    <button ref={ref} type={type} className={classes} {...rest}>
       {children}
     </button>
   );
-}
+});
+
+export default Button;
 

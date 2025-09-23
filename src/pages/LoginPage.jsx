@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -61,7 +61,7 @@ export default function LoginPage() {
           <Button className="btn btn-primary btn-auth" type="submit" disabled={isSubmitting}>
             Log in
           </Button>
-          <p className="auth-alt">Not a member? <a href={ROUTES.REGISTER}>Register</a></p>
+          <p className="auth-alt">Not a member? <Link to={ROUTES.REGISTER}>Register</Link></p>
         </form>
       </div>
     </div>

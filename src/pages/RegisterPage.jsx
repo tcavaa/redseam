@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -131,7 +131,7 @@ export default function RegisterPage() {
             onRightIconClick={() => setShowConfirm(s => !s)}
           />
           <Button className="btn btn-primary btn-auth" type="submit" disabled={isSubmitting}>Register</Button>
-          <p className="auth-alt">Already member? <a href={ROUTES.LOGIN}>Log in</a></p>
+          <p className="auth-alt">Already member? <Link to={ROUTES.LOGIN}>Log in</Link></p>
         </form>
       </div>
     </div>
