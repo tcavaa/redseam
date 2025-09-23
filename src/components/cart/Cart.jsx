@@ -11,7 +11,7 @@ import { ROUTES } from '../../constants';
 import Loading from '../ui/Loading.jsx';
 
 export default function Cart() {
-  const { items, open, setOpen, subtotal, loading } = useCartContext();
+  const { items, totalQuantity, open, setOpen, subtotal, loading } = useCartContext();
   const navigate = useNavigate();
   const location = useLocation();
   const delivery = items.length ? UI.DELIVERY_FEE : 0;
@@ -27,7 +27,7 @@ export default function Cart() {
     {open ? <div className="cart-backdrop" onClick={() => setOpen(false)} /> : null}
     <aside className={`cart-drawer ${open ? 'open' : ''}`} role="dialog" aria-modal>
       <div className="cart-header">
-        <h2>Shopping cart ({items.length})</h2>
+        <h2>Shopping cart ({totalQuantity})</h2>
         <button className="close" onClick={() => setOpen(false)}>✕</button>
       </div>
       <div className="cart-body">

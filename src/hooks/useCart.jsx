@@ -1,10 +1,12 @@
 import React, { createContext, useContext, useEffect, useMemo, useState, useCallback } from 'react';
 import { addToCart as apiAdd, getCart as apiGet, removeFromCart as apiRemove, updateCartItem as apiUpdate } from '../api/cart';
 import { STORAGE_KEYS, calculateCartSubtotal, calculateTotalCartQuantity, findCartItem } from '../utils/cart';
+import { useAuth } from './useAuth.jsx';
 
 const CartContext = createContext(null);
 
 export function CartProvider({ children }) {
+  const { isAuthed, user } = useAuth();
   const [items, setItems] = useState(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEYS.CART_ITEMS);
@@ -46,11 +48,18 @@ export function CartProvider({ children }) {
     }
   }, [persist]);
 
+  // React to auth changes via context (login/logout or user switch within the app)
   useEffect(() => {
-    if (localStorage.getItem('auth_token')) {
-      refresh();
+    if (!isAuthed) {
+      // Logged out: clear immediately
+      persist([]);
+      setOpen(false);
+      return;
     }
-  }, []);
+    // Logged in (initial or user switched): clear then fetch server cart
+    persist([]);
+    refresh();
+  }, [isAuthed, user?.id, persist, refresh]);
 
   const subtotal = useMemo(() => calculateCartSubtotal(items), [items]);
   const totalQuantity = useMemo(() => calculateTotalCartQuantity(items), [items]);
