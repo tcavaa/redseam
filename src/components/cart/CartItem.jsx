@@ -14,7 +14,7 @@ function CartItem({ item }) {
           {item.size ? <span>{item.size}</span> : null}
         </div>
         <div className="qty">
-          <button onClick={() => decrement(item.id, qty)}>−</button>
+          <button onClick={() => decrement(item.id, qty)} disabled={qty <= 1}>−</button>
           <span>{qty}</span>
           <button onClick={() => increment(item.id, qty)}>+</button>
         </div>
