@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { Suspense, useCallback, useTransition } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -8,8 +8,12 @@ import Button from '../components/ui/Button';
 import { Eye } from '../components/ui';
 import AvatarUploader from '../components/auth/AvatarUploader.jsx';
 import { useFilePreview } from '../hooks/useFilePreview';
-import { register as registerRequest } from '../api/auth';
+import { useAuth } from '../hooks/useAuth.jsx';
 import { ROUTES } from '../constants';
+import Loading from '../components/ui/Loading';
+import { useToggle } from '../hooks/useToggle';
+
+const AuthLayout = React.lazy(() => import('../components/layout/AuthLayout.jsx'));
 
 const schema = z
   .object({
@@ -44,8 +48,9 @@ const schema = z
 
 export default function RegisterPage() {
   const navigate = useNavigate();
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
+  const { register: registerRequest } = useAuth();
+  const { value: showPassword, toggle: togglePassword } = useToggle(false);
+  const { value: showConfirm, toggle: toggleConfirm } = useToggle(false);
   const {
     register,
     handleSubmit,
@@ -55,7 +60,8 @@ export default function RegisterPage() {
     clearErrors,
     formState: { errors, isSubmitting },
   } = useForm({ resolver: zodResolver(schema) });
-  const [apiError, setApiError] = useState('');
+  const [apiError, setApiError] = React.useState('');
+  const [isPending, startTransition] = useTransition();
 
   const avatarFile = watch('avatar');
   const avatarPreview = useFilePreview(avatarFile);
@@ -68,7 +74,7 @@ export default function RegisterPage() {
     },
   });
 
-  async function onSubmit(values) {
+  const onSubmit = useCallback(async (values) => {
     setApiError('');
     try {
       await registerRequest({
@@ -78,7 +84,9 @@ export default function RegisterPage() {
         passwordConfirmation: values.confirmPassword,
         avatar: Array.isArray(values.avatar) ? values.avatar[0] : values.avatar,
       });
-      navigate(ROUTES.PRODUCTS);
+      startTransition(() => {
+        navigate(ROUTES.PRODUCTS);
+      });
     } catch (err) {
       const message = err?.message || 'Registration failed';
       setApiError(message);
@@ -94,13 +102,15 @@ export default function RegisterPage() {
         }
       });
     }
-  }
+  }, [navigate, setError, startTransition, registerRequest]);
 
   return (
-    <div className="auth-layout">
-      <div className="auth-hero" />
-      <div className="auth-panel auth-panel-register">
-        <h1 className="auth-title">Registration</h1>
+    <Suspense fallback={<Loading label="Loading page..." />}>
+      <AuthLayout
+        title="Registration"
+        panelClassName="auth-panel-register"
+        footer={<p className="auth-alt">Already member? <Link to={ROUTES.LOGIN}>Log in</Link></p>}
+      >
         <AvatarUploader
           fileList={avatarFile}
           registerProps={avatarRegister}
@@ -117,8 +127,8 @@ export default function RegisterPage() {
             register={register}
             error={errors.password?.message}
             required
-            rightIcon={<span role="img" aria-label="toggle"><img src={Eye} alt="Eye" /></span>}
-            onRightIconClick={() => setShowPassword(s => !s)}
+            rightIcon={<span role="img" aria-label="toggle"><img src={Eye} alt={showPassword ? 'Hide password' : 'Show password'} /></span>}
+            onRightIconClick={togglePassword}
           />
           <Input
             name="confirmPassword"
@@ -127,14 +137,13 @@ export default function RegisterPage() {
             register={register}
             error={errors.confirmPassword?.message}
             required
-            rightIcon={<span role="img" aria-label="toggle"><img src={Eye} alt="Eye" /></span>}
-            onRightIconClick={() => setShowConfirm(s => !s)}
+            rightIcon={<span role="img" aria-label="toggle"><img src={Eye} alt={showConfirm ? 'Hide password' : 'Show password'} /></span>}
+            onRightIconClick={toggleConfirm}
           />
-          <Button className="btn btn-primary btn-auth" type="submit" disabled={isSubmitting}>Register</Button>
-          <p className="auth-alt">Already member? <Link to={ROUTES.LOGIN}>Log in</Link></p>
+          <Button className="btn btn-primary btn-auth" type="submit" disabled={isSubmitting || isPending}>Register</Button>
         </form>
-      </div>
-    </div>
+      </AuthLayout>
+    </Suspense>
   );
 }
 

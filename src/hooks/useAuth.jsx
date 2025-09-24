@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { logout as apiLogout } from '../api/auth';
+import React, { createContext, useContext, useEffect, useMemo, useState, useCallback } from 'react';
+import { login as apiLogin, register as apiRegister, logout as apiLogout } from '../api/auth';
 
 const AuthContext = createContext(null);
 
@@ -21,7 +21,8 @@ export function AuthProvider({ children }) {
   });
 
   useEffect(() => {
-    function sync() {
+    function syncStorage(e) {
+      if (!e || (e.key && !['user', 'auth_token'].includes(e.key))) return;
       try {
         const raw = localStorage.getItem('user');
         setUser(raw ? JSON.parse(raw) : null);
@@ -34,32 +35,48 @@ export function AuthProvider({ children }) {
         setToken('');
       }
     }
-
-    function syncStorage(e) {
-      if (!e || (e.key && !['user', 'auth_token'].includes(e.key))) return;
-      sync();
-    }
-
-    window.addEventListener('auth:user-updated', sync);
     window.addEventListener('storage', syncStorage);
-    return () => {
-      window.removeEventListener('auth:user-updated', sync);
-      window.removeEventListener('storage', syncStorage);
-    };
+    return () => window.removeEventListener('storage', syncStorage);
   }, []);
 
   const isAuthed = !!token;
 
-  function logout() {
+  const login = useCallback(async ({ email, password }) => {
+    const data = await apiLogin({ email, password });
+    const tokenFromApi = data?.token || '';
+    const userFromApi = data?.user || null;
+    try {
+      if (tokenFromApi) localStorage.setItem('auth_token', tokenFromApi);
+      if (userFromApi) localStorage.setItem('user', JSON.stringify(userFromApi));
+    } catch {}
+    setToken(tokenFromApi);
+    setUser(userFromApi);
+    return data;
+  }, []);
+
+  const register = useCallback(async ({ username, email, password, passwordConfirmation, avatar }) => {
+    const data = await apiRegister({ username, email, password, passwordConfirmation, avatar });
+    const tokenFromApi = data?.token || '';
+    const userFromApi = data?.user || null;
+    try {
+      if (tokenFromApi) localStorage.setItem('auth_token', tokenFromApi);
+      if (userFromApi) localStorage.setItem('user', JSON.stringify(userFromApi));
+    } catch {}
+    setToken(tokenFromApi);
+    setUser(userFromApi);
+    return data;
+  }, []);
+
+  const logout = useCallback(() => {
     try {
       apiLogout();
     } finally {
       setUser(null);
       setToken('');
     }
-  }
+  }, []);
 
-  const value = useMemo(() => ({ user, setUser, isAuthed, logout }), [user, isAuthed]);
+  const value = useMemo(() => ({ user, setUser, isAuthed, login, register, logout }), [user, isAuthed, login, register, logout]);
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
