@@ -21,7 +21,40 @@ export function useQueryParams() {
     setParams(next);
   };
 
-  return { getParam, setParam, setParamsBatch, raw: params };
+  // Helpers commonly needed by list pages: change filters/sort and reset page to 1
+  const setParamAndResetPage = (key, value) => {
+    const next = new URLSearchParams(params);
+    if (value === '' || value == null) next.delete(key);
+    else next.set(key, value);
+    next.set('page', '1');
+    setParams(next);
+  };
+
+  const setParamsBatchAndResetPage = pairs => {
+    const next = new URLSearchParams(params);
+    Object.entries(pairs).forEach(([key, value]) => {
+      if (value === '' || value == null) next.delete(key);
+      else next.set(key, value);
+    });
+    next.set('page', '1');
+    setParams(next);
+  };
+
+  const setPage = (pageNumber) => {
+    const next = new URLSearchParams(params);
+    next.set('page', String(pageNumber));
+    setParams(next);
+  };
+
+  return {
+    getParam,
+    setParam,
+    setParamsBatch,
+    setParamAndResetPage,
+    setParamsBatchAndResetPage,
+    setPage,
+    raw: params,
+  };
 }
 
 

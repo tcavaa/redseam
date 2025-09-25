@@ -1,6 +1,10 @@
-export function parsePageFromUrl(url) {
+export function parsePageFromUrl(input) {
   try {
-    const u = new URL(url);
+    if (!input) return undefined;
+    const raw = typeof input === 'object' && input !== null && 'url' in input ? input.url : input;
+    if (!raw) return undefined;
+    const base = typeof window !== 'undefined' && window.location ? window.location.origin : 'http://localhost';
+    const u = new URL(raw, base);
     const p = u.searchParams.get('page');
     return p ? Number(p) : undefined;
   } catch (_) {

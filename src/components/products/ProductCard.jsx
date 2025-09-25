@@ -1,7 +1,6 @@
 import React, { memo } from 'react';
 import { Link } from 'react-router-dom';
 
-
 function ProductCard({ product }) {
   const image = product?.cover_image || product?.image;
   return (
@@ -18,4 +17,5 @@ function ProductCard({ product }) {
 }
 
 export default memo(ProductCard);
+
 
