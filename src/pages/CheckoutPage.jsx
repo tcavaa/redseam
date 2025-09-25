@@ -126,7 +126,7 @@ export default function CheckoutPage() {
         <div className="checkout-summary">
           <ul className="summary-list">
           {items.map(item => (
-              <CartItem key={item.id} item={item} />
+              <CartItem key={`${item.id}-${item.color || ''}-${item.size || ''}`} item={item} />
             ))}
           </ul>
 

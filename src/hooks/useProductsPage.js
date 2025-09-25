@@ -125,8 +125,9 @@ export function useProductsData({ page, sort, priceFrom, priceTo }) {
 
   useEffect(() => {
     let mounted = true;
+    const controller = new AbortController();
     setLoading(true);
-    fetchProducts({ page, priceFrom: priceFrom || undefined, priceTo: priceTo || undefined, sort })
+    fetchProducts({ page, priceFrom: priceFrom || undefined, priceTo: priceTo || undefined, sort }, { signal: controller.signal })
       .then(async data => {
         if (!mounted) return;
         setProducts(data?.data || []);
@@ -136,20 +137,28 @@ export function useProductsData({ page, sort, priceFrom, priceTo }) {
         const lastPage = parsePageFromUrl(data?.links?.last);
         if (lastPage && lastPage > 1) {
           if (page === 1) {
-            const last = await fetchProducts({ page: lastPage, priceFrom: priceFrom || undefined, priceTo: priceTo || undefined, sort });
+            const last = await fetchProducts({ page: lastPage, priceFrom: priceFrom || undefined, priceTo: priceTo || undefined, sort }, { signal: controller.signal });
             const countOnLast = Array.isArray(last?.data) ? last.data.length : 0;
             const totalExact = (lastPage - 1) * (data?.meta?.per_page || PAGE_SIZE) + countOnLast;
             setTotal(totalExact);
           }
         } else {
           if (data?.meta?.to != null) {
-            setTotal(Math.max(data.meta.to + (page - 1) * (data?.meta?.per_page || PAGE_SIZE)));
+            setTotal(data.meta.to + (page - 1) * (data?.meta?.per_page || PAGE_SIZE));
           }
         }
+      })
+      .catch(err => {
+        if (err && (err.code === 'ERR_CANCELED' || err.name === 'CanceledError')) {
+          return; // ignore cancellation
+        }
+        // eslint-disable-next-line no-console
+        console.warn('Products fetch error', err);
       })
       .finally(() => mounted && setLoading(false));
     return () => {
       mounted = false;
+      controller.abort();
     };
   }, [page, priceFrom, priceTo, sort]);
 

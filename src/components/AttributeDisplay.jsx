@@ -9,7 +9,7 @@ export function ColorSelector({ colors = [], active, onChange }) {
           : { backgroundColor: c?.hex || c };
         return (
           <button
-            key={idx}
+            key={c?.name || c?.hex || String(idx)}
             className={`color-swatch ${active === idx ? 'active' : ''}`}
             style={style}
             onClick={() => onChange && onChange(idx)}
@@ -26,7 +26,7 @@ export function SizeSelector({ sizes = [], active, onChange }) {
     <div className="size-selector">
       {sizes.map((s, idx) => (
         <button
-          key={s}
+          key={`${s}-${idx}`}
           className={`size-chip ${active === idx ? 'active' : ''}`}
           onClick={() => onChange && onChange(idx)}
         >

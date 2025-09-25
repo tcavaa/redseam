@@ -18,9 +18,8 @@ export default function Cart() {
   const total = subtotal + delivery;
 
   useEffect(() => {
-    if (open) setOpen(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.pathname]);
+    setOpen(false);
+  }, [location.pathname, setOpen]);
 
   return (
     <>
@@ -43,7 +42,7 @@ export default function Cart() {
         ) : (
           <ul className="cart-list">
             {items.map(item => (
-              <CartItem key={item.id} item={item} />
+              <CartItem key={`${item.id}-${item.color || ''}-${item.size || ''}`} item={item} />
             ))}
           </ul>
         )}

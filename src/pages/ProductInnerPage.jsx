@@ -27,9 +27,10 @@ export default function ProductInnerPage() {
 
   useEffect(() => {
     let mounted = true;
+    const controller = new AbortController();
     setLoading(true);
     setNotFound(false);
-    fetchProductById(id)
+    fetchProductById(id, { signal: controller.signal })
       .then(data => {
         if (!mounted) return;
         if (!data || !data.id) {
@@ -41,10 +42,11 @@ export default function ProductInnerPage() {
         setActiveColor(0);
         setActiveSize(0);
       })
-      .catch(() => { if (mounted) setNotFound(true); })
+      .catch((err) => { if (mounted && !(err?.name === 'CanceledError' || err?.code === 'ERR_CANCELED')) setNotFound(true); })
       .finally(() => mounted && setLoading(false));
     return () => {
       mounted = false;
+      controller.abort();
     };
   }, [id]);
 

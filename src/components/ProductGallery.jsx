@@ -7,7 +7,7 @@ function ProductGallery({ images = [], activeIndex = 0, onChange }) {
       <div className="thumbs">
         {images.map((src, idx) => (
           <button
-            key={idx}
+            key={`${String(src)}-${idx}`}
             className={`thumb ${idx === active ? 'active' : ''}`}
             onClick={() => onChange && onChange(idx)}
           >
