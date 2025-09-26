@@ -82,6 +82,10 @@ export default function ProductsPage() {
             <ProductCardSkeleton key={i} />
           ))}
         </div>
+      ) : products.length == 0 ? (
+        <div className="grid">
+          <h1>No products found</h1>
+        </div>
       ) : (
         <div className="grid">
           {products.map(p => (

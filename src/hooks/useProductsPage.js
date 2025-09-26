@@ -10,7 +10,7 @@ const PAGE_SIZE = UI.PAGE_SIZE;
 function filtersReducer(state, action) {
   switch (action.type) {
     case 'open':
-      return { ...state, open: true, error: '', fromInput: action.from ?? '', toInput: action.to ?? '' };
+      return { ...state, open: true, error: '' };
     case 'close':
       return { ...state, open: false, error: '' };
     case 'set_from':
@@ -19,6 +19,8 @@ function filtersReducer(state, action) {
       return { ...state, toInput: sanitizeNumberInput(action.value), error: '' };
     case 'error':
       return { ...state, error: action.message ?? '' };
+    case 'sync':
+      return { ...state, fromInput: action.from ?? '', toInput: action.to ?? '' };
     default:
       return state;
   }
@@ -58,8 +60,8 @@ export function useFiltersAndSort() {
   }, [sort]);
 
   const openFilters = useCallback(() => {
-    dispatchFilter({ type: 'open', from: priceFrom, to: priceTo });
-  }, [priceFrom, priceTo]);
+    dispatchFilter({ type: 'open' });
+  }, []);
 
   const closeFilters = useCallback(() => dispatchFilter({ type: 'close' }), []);
   const setFromInput = useCallback((v) => dispatchFilter({ type: 'set_from', value: v }), []);
@@ -89,6 +91,10 @@ export function useFiltersAndSort() {
   }, [setParamAndResetPage, closeSort]);
 
   const rangeInvalid = useMemo(() => isPriceRangeInvalid(filterState.fromInput, filterState.toInput), [filterState.fromInput, filterState.toInput]);
+
+  useEffect(() => {
+    dispatchFilter({ type: 'sync', from: priceFrom, to: priceTo });
+  }, [priceFrom, priceTo]);
 
   return {
     // params
