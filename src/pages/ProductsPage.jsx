@@ -2,6 +2,7 @@ import React from 'react';
 import ProductCard from '../components/products/ProductCard.jsx';
 import '../styles/ProductsPage.css';
 import Loading from '../components/ui/Loading.jsx';
+import ProductCardSkeleton from '../components/products/ProductCardSkeleton.jsx';
 import { UI } from '../constants';
 import { useQueryParams } from '../hooks/useQueryParams';
 import { useFiltersAndSort, usePaginationControls, useProductsData } from '../hooks/useProductsPage';
@@ -76,7 +77,11 @@ export default function ProductsPage() {
       ) : null}
 
       {loading ? (
-        <Loading style={{ padding: 40 }} />
+        <div className="grid" aria-busy>
+          {Array.from({ length: pageSize || PAGE_SIZE }).map((_, i) => (
+            <ProductCardSkeleton key={i} />
+          ))}
+        </div>
       ) : (
         <div className="grid">
           {products.map(p => (
