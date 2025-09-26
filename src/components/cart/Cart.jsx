@@ -30,9 +30,7 @@ export default function Cart() {
         <button className="close" onClick={() => setOpen(false)}>✕</button>
       </div>
       <div className="cart-body">
-        {loading ? (
-          <div className="cart-empty"><Loading /></div>
-        ) : items.length === 0 ? (
+        {items.length === 0 ? (
           <div className="cart-empty">
             <img src={EmptyCart} alt="Empty cart" />
             <h2>Ooops!</h2>

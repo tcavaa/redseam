@@ -14,13 +14,13 @@ function CartItem({ item }) {
           {item.size ? <span>{item.size}</span> : null}
         </div>
         <div className="qty">
-          <button onClick={() => decrement(item.id, qty)} disabled={qty <= 1}>−</button>
+          <button onClick={() => decrement(item.id, qty, { color: item.color, size: item.size })} disabled={qty <= 1}>−</button>
           <span>{qty}</span>
-          <button onClick={() => increment(item.id, qty)}>+</button>
+          <button onClick={() => increment(item.id, qty, { color: item.color, size: item.size })}>+</button>
         </div>
       </div>
       <div className="price">$ {item.price}</div>
-      <button className="remove" onClick={() => remove(item.id)}>Remove</button>
+      <button className="remove" onClick={() => remove(item.id, { color: item.color, size: item.size })}>Remove</button>
     </li>
   );
 }

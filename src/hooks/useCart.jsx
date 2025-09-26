@@ -88,22 +88,22 @@ export function CartProvider({ children }) {
     }
   }, [refresh, isAuthed]);
 
-  const increment = useCallback(async (productId, currentQuantity) => {
+  const increment = useCallback(async (productId, currentQuantity, { color, size } = {}) => {
     if (!isAuthed) return;
-    await apiUpdate(productId, { quantity: currentQuantity + 1 });
+    await apiUpdate(productId, { quantity: currentQuantity + 1, color, size });
     await refresh();
   }, [refresh, isAuthed]);
 
-  const decrement = useCallback(async (productId, currentQuantity) => {
+  const decrement = useCallback(async (productId, currentQuantity, { color, size } = {}) => {
     if (!isAuthed) return;
     const next = Math.max(1, currentQuantity - 1);
-    await apiUpdate(productId, { quantity: next });
+    await apiUpdate(productId, { quantity: next, color, size });
     await refresh();
   }, [refresh, isAuthed]);
 
-  const remove = useCallback(async (productId) => {
+  const remove = useCallback(async (productId, { color, size } = {}) => {
     if (!isAuthed) return;
-    await apiRemove(productId);
+    await apiRemove(productId, { color, size });
     await refresh();
   }, [refresh, isAuthed]);
 
